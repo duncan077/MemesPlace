@@ -1,0 +1,49 @@
+﻿@inject HttpClient Http
+<div>
+<div class="card" style="text-align: center;">
+  
+    @if (memeObj!=null)
+    {
+        <div class="card-body" style="text-align: center;">
+            <h4 class="card-title" style="text-align: center;">Meme</h4>
+            <h6 class="text-muted card-subtitle mb-2" style="text-align: center;">Subtitle</h6>
+            <div class="col" style="text-align: center;">
+                @if (!memeObj.vid)
+                {
+                    <img style="padding: 0px;height: 372px;width: 370px;transform: translate(0px);margin-left: 0;" src="https://www.planetaneperiano.com/imagenes/neperianadas/525/69190_62b77c5fa0a96.jpg" />
+                }</div>
+            <div class="col" style="text-align: center;"><i class="far fa-hand-point-right" style="text-align: center;"></i><i class="far fa-comment"></i><i class="far fa-star"></i></div>
+        </div>
+    }else{
+    <div class="card-body" style="text-align: left;">
+            <h4 class="card-title" style="text-align: center;">Meme Not Found</h4>
+            <h6 class="text-muted card-subtitle mb-2" style="text-align: center;">Go to view something else...</h6>
+            <div class="col" style="text-align: center;">
+               
+                    <img style="padding: 0px;height: 372px;width: 370px;transform: translate(0px);margin-left: 0;" src="https://www.planetaneperiano.com/imagenes/neperianadas/525/69190_62b77c5fa0a96.jpg" />
+                </div>
+            <div class="col" style="text-align: center;"><i class="far fa-hand-point-right" style="text-align: center;"></i><i class="far fa-comment"></i><i class="far fa-star"></i></div>
+        </div>
+    }
+</div>
+</div>
+@code {
+    [Parameter]
+    public Meme? memeObj { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        
+       
+    }
+    public class Meme
+    {
+        
+        public string Name { get; set; }
+        public string Desc { get; set; }
+        public string url { get; set; }
+        public bool vid = false;
+    }
+}
