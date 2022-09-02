@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using MemesAPI.Extension;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
+using MemesAPI.Models.Meme;
 
 namespace MemesAPI.Controllers
 {
@@ -34,18 +35,34 @@ namespace MemesAPI.Controllers
 
         // GET: api/Memes
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Meme>>> GetMemes([FromQuery] MemeParameters memeParameters)
+        public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemes([FromQuery] MemeParameters memeParameters)
         {
           if (_context.Memes == null)
           {
               return NotFound();
           }
-            return await _context.Memes.Skip((memeParameters.PageNumber-1)*memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+            var memes = await _context.Memes.OrderBy(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+          List<MemeDTO> result = new List<MemeDTO>();
+            foreach (var meme in memes)
+            {
+                var dto = new MemeDTO();
+                dto.Desc = meme.Description;
+                dto.imgURL = meme.URLIMG;
+                dto.Name = meme.Name;
+                dto.UserName = meme.UserName;
+                dto.Date = meme.Date;
+                dto.likeCount = meme.Likes.Count();
+                dto.like = meme.Likes.Contains((MemeUser)_context.Users.Where(x => x.UserName.Equals(_contextAccessor.HttpContext.User.Identity.Name)));
+                result.Add(dto);
+            }
+          
+            
+            return Ok(result);
         }
 
         // GET: api/Memes/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Meme>> GetMeme(int id)
+        public async Task<ActionResult<MemeDTO>> GetMeme(int id)
         {
           if (_context.Memes == null)
           {
@@ -57,53 +74,65 @@ namespace MemesAPI.Controllers
             {
                 return NotFound();
             }
-
-            return meme;
+            MemeDTO dto = new MemeDTO();
+                dto.Desc = meme.Description;
+                dto.imgURL = meme.URLIMG;
+                dto.Name = meme.Name;
+                dto.UserName = meme.UserName;
+                dto.Date = meme.Date;
+                dto.likeCount = meme.Likes.Count;
+            if(User.Identity.IsAuthenticated)
+                dto.like = meme.Likes.Contains((MemeUser)_context.Users.Where(x => x.UserName.Equals(_contextAccessor.HttpContext.User.Identity.Name)));
+                else
+                dto.like = false;
+            return dto;
         }
 
-        // PUT: api/Memes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [Authorize()]
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMeme(int id, Meme meme)
+        [HttpPost]
+        [Authorize]
+        public async Task<ActionResult> LikeMeme(int id)
         {
-            if (id != meme.Id && _contextAccessor.HttpContext.User.Identity.Name==meme.UserName);
+            if (_context.Memes == null)
             {
-                return BadRequest();
+                return NotFound();
+            }
+            var meme = await _context.Memes.FindAsync(id);
+            MemeUser user = (MemeUser)_context.Users.Where(x=>x.UserName.Equals(_contextAccessor.HttpContext.User.Identity.Name)).First();
+            
+            if (meme == null)
+            {
+                return NotFound();
+            }
+            if (meme.Likes.Contains((MemeUser)user))
+            {
+                meme.Likes.Remove((MemeUser)user);
+            }
+            else
+            {
+                meme.Likes.Add((MemeUser)user);
             }
 
-            _context.Entry(meme).State = EntityState.Modified;
 
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!MemeExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
 
-            return NoContent();
+            return Accepted();
         }
 
         // POST: api/Memes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<Meme>> PostMeme(Meme meme)
+        public async Task<ActionResult<Meme>> PostMeme(MemeAddDTO memeDTO)
         {
+            var meme = new Meme();
           if (_context.Memes == null)
           {
               return Problem("Entity set 'AppDBContext.Memes'  is null.");
           }
+            meme.Name = memeDTO.Name;
+            meme.Description=memeDTO.Description;
+            meme.URLIMG = memeDTO.URLIMG;
             meme.UserName = _contextAccessor.HttpContext.User.Identity.Name;
+            meme.Date = new DateTime().Date;
             _context.Memes.Add(meme);
             await _context.SaveChangesAsync();
 
