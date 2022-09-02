@@ -12,8 +12,8 @@ namespace MemesAPI.Data
         protected AppDBContext()
         {
         }
-        DbSet<Meme> Memes { get; set; }
-        DbSet<MemeLike> MemeLike { get; set; }
-        DbSet<MemeUser> MemeUser { get; set; }
+       public DbSet<Meme> Memes { get; set; }
+       public DbSet<MemeLike> MemeLike { get; set; }
+       public DbSet<MemeUser> MemeUser { get; set; }
     }
 }
