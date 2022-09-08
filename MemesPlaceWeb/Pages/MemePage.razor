@@ -1,0 +1,25 @@
+﻿@page "/Meme/{id}"
+@using MemesPlaceWeb.Component
+<PageTitle>@pageTitle</PageTitle>
+<div class="col-12 col-lg-10 mx-auto">
+    <div class="row">
+        <div class="col" style="flex: 1 0 70%;">
+            <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
+                <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
+                    @foreach (var item in memes)
+                    {
+                        <item></item>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
+    </div>
+</div>
+
+@code {
+    public string pageTitle = "MemesPlace";
+    List<MemeComponent> memes = new List<MemeComponent>();
+
+    
+}

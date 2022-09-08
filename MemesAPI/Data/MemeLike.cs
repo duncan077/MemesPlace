@@ -1,14 +1,18 @@
 ﻿using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace MemesAPI.Data
 {
-    [Keyless]
+    
     public class MemeLike
     {
-        
-        [ForeignKey(nameof(MemeUser))]
+        [Required]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+        [Required]
+        [ForeignKey(nameof(MemeUser.UserName))]
         public string UserName { get; set; }
         public DateTime DateTime { get; set; }
         [ForeignKey(nameof(Meme))]

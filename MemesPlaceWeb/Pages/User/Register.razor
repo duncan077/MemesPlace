@@ -1,0 +1,53 @@
+﻿@page "/users/register"
+@inject IClient httpclient
+<h3>Register</h3>
+
+@if(!string.IsNullOrEmpty(message)){
+
+<div class="alert-danger">@message</div>
+}
+<div class=card-body>
+    <EditForm Model="regModel" OnValidSubmit="RegisterPost">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+        <div class="form-group">
+            <label for="username">UserName</label>
+            <InputText class="form-control" @bind-Value="regModel.UserName"></InputText>
+            <ValidationMessage For="@(()=>regModel.UserName)"></ValidationMessage>
+        </div>
+        <div class="form-group">
+            <label for="email">Email Address</label>
+            <InputText class="form-control" @bind-Value="regModel.Email"></InputText>
+            <ValidationMessage For="@(()=>regModel.Email)"></ValidationMessage>
+        </div>
+        <div class="form-group">
+            <label for="pasword">Password</label>
+            <InputText class="form-control" type="password" @bind-Value="regModel.Password"></InputText>
+            <ValidationMessage For="@(()=>regModel.Password)"></ValidationMessage>
+        </div>
+    
+
+        <button type="submit" class="btn btn-primary btn-block">Register</button>
+
+    </EditForm>
+</div>
+
+@code {
+    UserDTO regModel = new UserDTO(); 
+    string message = string.Empty;
+    private async Task RegisterPost(){
+       
+
+
+        try
+        {
+            await httpclient.RegisterAsync(regModel);
+        }
+        catch (ApiException ex)
+        {
+            message = ex.Message;
+
+        }
+    }
+
+}

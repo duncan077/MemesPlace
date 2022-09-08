@@ -41,7 +41,7 @@ namespace MemesAPI.Controllers
           {
               return NotFound();
           }
-            var memes = await _context.Memes.OrderBy(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+            var memes = await _context.Memes.OrderBy(m => m.Date).Where(z=>z.Name.Contains(memeParameters.name)).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
           List<MemeDTO> result = new List<MemeDTO>();
             foreach (var meme in memes)
             {
@@ -52,7 +52,9 @@ namespace MemesAPI.Controllers
                 dto.UserName = meme.UserName;
                 dto.Date = meme.Date;
                 dto.likeCount = meme.Likes.Count();
-                dto.like = meme.Likes.Contains((MemeUser)_context.Users.Where(x => x.UserName.Equals(_contextAccessor.HttpContext.User.Identity.Name)));
+                if(User.Identity.IsAuthenticated)
+                dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+            
                 result.Add(dto);
             }
           
@@ -82,16 +84,17 @@ namespace MemesAPI.Controllers
                 dto.Date = meme.Date;
                 dto.likeCount = meme.Likes.Count;
             if(User.Identity.IsAuthenticated)
-                dto.like = meme.Likes.Contains((MemeUser)_context.Users.Where(x => x.UserName.Equals(_contextAccessor.HttpContext.User.Identity.Name)));
-                else
-                dto.like = false;
+                dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+            else
+            dto.like = false;
             return dto;
         }
 
-        [HttpPost]
+        [HttpPost("like/{id}")]
         [Authorize]
         public async Task<ActionResult> LikeMeme(int id)
         {
+            
             if (_context.Memes == null)
             {
                 return NotFound();
@@ -103,13 +106,22 @@ namespace MemesAPI.Controllers
             {
                 return NotFound();
             }
-            if (meme.Likes.Contains((MemeUser)user))
+            var like = meme.Likes.First(z => z.UserName == User.Identity.Name);
+            if (like!=null)
             {
-                meme.Likes.Remove((MemeUser)user);
+
+                _context.MemeLike.Remove(like);
+                _context.SaveChanges();
             }
             else
             {
-                meme.Likes.Add((MemeUser)user);
+                 like = new MemeLike();
+                like.UserName = User.Identity.Name;
+                like.Meme = id;
+                like.DateTime = DateTime.UtcNow;
+                 _context.MemeLike.Add(like);
+                _context.SaveChanges();
+                
             }
 
 

@@ -1,0 +1,99 @@
+﻿@page "/users/login"
+@inject NavigationManager nav
+@inject IAuthService auth
+@using Microsoft.AspNetCore.WebUtilities
+<h3>Login</h3>
+
+
+@if (!string.IsNullOrEmpty(message))
+{
+
+    <div class="alert-danger">@message</div>
+}
+<div class=card-body>
+    <EditForm Model="loginModel" OnValidSubmit="LoginPost">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div class="form-group">
+            <label for="username">UserName</label>
+            <InputText class="form-control" @bind-Value="loginModel.UserName"></InputText>
+            <ValidationMessage For="@(()=>loginModel.UserName)"></ValidationMessage>
+        </div>
+     
+        <div class="form-group">
+            <label for="pasword">Password</label>
+            <InputText class="form-control" type="password" @bind-Value="loginModel.Password"></InputText>
+            <ValidationMessage For="@(()=>loginModel.Password)"></ValidationMessage>
+        </div>
+   
+
+        <button type="submit" class="btn btn-primary btn-block">Login</button>
+
+    </EditForm>
+    <button class="btn btn-block btn-social btn-google" @onclick="GoogleLoginPost"><span classclass="fa fa-google"></span><b>Google Login</b></button>
+</div>
+
+@code {
+    LoginUserDTO loginModel = new LoginUserDTO();
+    string message = string.Empty;
+    private async Task LoginPost()
+    {
+        try
+        {
+            var response= await auth.AuthAsync(loginModel);
+            if(response)
+            {
+                nav.NavigateTo("/");
+            }
+            message = "Invalid Login. Please try again";
+        }
+        catch (ApiException ex)
+        {
+            message = ex.Message;
+
+        }
+    }
+    ExternalAuthDto googleLogin = new ExternalAuthDto();
+    private async Task GoogleLoginPost()
+    {
+        var accessTokenRequest = "https://accounts.google.com/o/oauth2/v2/auth?";
+
+        accessTokenRequest += $"scope=email&";
+        accessTokenRequest += $"client_id=222814136008-0c3t1h5johchc2lnecet2nfbmjnjr535.apps.googleusercontent.com&";
+        accessTokenRequest += $"redirect_uri=https://localhost:7196/users/login&";
+        accessTokenRequest += $"access_type=online&";
+        accessTokenRequest += $"nonce=sdf4gdfg&";
+        accessTokenRequest += $"response_type=id_token&";
+        accessTokenRequest += $"state=state_parameter_passthrough_value";
+
+
+        nav.NavigateTo(accessTokenRequest, true);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        Microsoft.Extensions.Primitives.StringValues _idToken ;
+        
+        if (QueryHelpers.ParseQuery(nav.Uri).TryGetValue("id_token", out _idToken))
+        {
+            try
+            {
+                var response = await auth.AuthGoogleAsync(_idToken);
+                if (response)
+                {
+                    nav.NavigateTo("/");
+                }
+                message = "Invalid Login. Please try again";
+            }
+            catch (ApiException ex)
+            {
+                message = ex.Message;
+
+            }
+
+
+        }
+        
+    }
+
+
+}
