@@ -1,4 +1,6 @@
-﻿@page "/Meme/{id}"
+﻿@page "/Meme"
+@page "/"
+@inject IClient cl
 @using MemesPlaceWeb.Component
 <PageTitle>@pageTitle</PageTitle>
 <div class="col-12 col-lg-10 mx-auto">
@@ -8,7 +10,7 @@
                 <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
                     @foreach (var item in memes)
                     {
-                        <item></item>
+                        <MemeComponent meme=item></MemeComponent>
                     }
                 </div>
             </div>
@@ -19,7 +21,12 @@
 
 @code {
     public string pageTitle = "MemesPlace";
-    List<MemeComponent> memes = new List<MemeComponent>();
 
-    
+    List<MemeDTO> memes=new List<MemeDTO>(); 
+    protected override async Task OnInitializedAsync()
+    {
+        var res =await cl.MemesAllAsync(1, "", 10);
+        memes=(res.ToList());
+        StateHasChanged();
+    }
 }

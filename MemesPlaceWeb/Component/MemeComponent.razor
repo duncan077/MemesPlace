@@ -5,7 +5,7 @@
             <h4 class="card-title" style="text-align: center;">@meme.Name</h4>
             <h6 class="text-muted card-subtitle mb-2">@meme.Desc</h6>
             <div class="row" style="text-align: center;transform-origin: center;">
-                <div class="col"><img style="min-width: 300px;height: 300px;" href=@meme.ImgURL /></div>
+                <div class="col"><img style="min-width: 300px;height: 300px;" src=@meme.ImgURL /></div>
             </div>
             <div class="row" style="text-align: center;padding-left: 0px;border-width: 0px;">
                 <div class="col"><p>Created: @meme.Date</p></div>
@@ -14,10 +14,8 @@
     </div>
 </div>
 @code {
-    MemeDTO meme = new MemeDTO();
-    public MemeComponent(MemeDTO memeDTO)
-    {
-        meme = memeDTO;
-    }
+    [Parameter]
+   public MemeDTO meme { get; set; }
+
 
 }

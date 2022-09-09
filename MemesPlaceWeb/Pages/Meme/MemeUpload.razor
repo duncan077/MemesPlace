@@ -1,0 +1,64 @@
+﻿@page "/upload"
+@inject NavigationManager nav
+@inject IMemesService memeService
+<h3>MemeUpload</h3>
+
+@if (!string.IsNullOrEmpty(message))
+{
+
+    <div class="alert-danger">@message</div>
+}
+
+        <div class=card-body >
+            <EditForm Model="memeAddDTO" OnValidSubmit="MemePost">
+            <DataAnnotationsValidator />
+             <ValidationSummary />
+              <div class="form-group">
+              <label for="name">Title</label>
+              <InputText class="form-control" @bind-Value="memeAddDTO.Name"></InputText>
+               <ValidationMessage For="@(()=>memeAddDTO.Name)"></ValidationMessage>
+                </div>
+             <div class="form-group">
+            <label for="desc">Description</label>
+            <InputText class="form-control" @bind-Value="memeAddDTO.Description"></InputText>
+                 <ValidationMessage For="@(()=>memeAddDTO.Description)"></ValidationMessage>
+                  </div>
+                  <div class="form-group">
+             <label for="name">url</label>
+            <InputText class="form-control" @bind-Value="memeAddDTO.Urlimg"></InputText>
+            <ValidationMessage For="@(()=>memeAddDTO.Urlimg)"></ValidationMessage>
+                  </div>
+       
+
+
+        <button type="submit" class="btn btn-primary btn-block">Upload</button>
+
+             </EditForm>
+        </div>
+
+
+@code {
+    string message;
+    MemeAddDTO memeAddDTO = new MemeAddDTO();
+
+
+    private async Task MemePost(){
+        try
+        {
+            var response =await memeService.AddMeme(memeAddDTO);
+            if(response.IsSuccess)
+            {
+                nav.NavigateTo("/");
+            }
+            else{
+                message = response.Message;
+            }
+        }
+        catch (ApiException ex)
+        {
+
+            message = ex.Message;
+        }
+    }
+
+}

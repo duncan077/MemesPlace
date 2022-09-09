@@ -27,6 +27,7 @@ namespace MemesAPI.Controllers
                 var securitySecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]));
                 var credentials = new SigningCredentials(securitySecret, SecurityAlgorithms.HmacSha256);
                 var roles = await _userManager.GetRolesAsync(user);
+                
                 var rolesClaims = roles.Select(q => new Claim(ClaimTypes.Role, q)).ToList();
                 var claims = new List<Claim>
             {
@@ -38,10 +39,10 @@ namespace MemesAPI.Controllers
             }.Union(rolesClaims);
 
                 var token = new JwtSecurityToken(
-                    issuer: configuration["JwtSettings.Issuer"],
-                    audience: configuration["JwtSettings.Audience"],
+                    issuer: configuration["JwtSettings:Issuer"],
+                    audience: configuration["JwtSettings:Audience"],
                     claims: claims,
-                    expires: DateTime.UtcNow.AddHours(Convert.ToInt32(configuration["JwtSettings.Duration"])),
+                    expires: DateTime.UtcNow.AddHours(int.Parse(configuration["JwtSettings:Duration"])),
                     signingCredentials: credentials);
                 return new JwtSecurityTokenHandler().WriteToken(token);
             }

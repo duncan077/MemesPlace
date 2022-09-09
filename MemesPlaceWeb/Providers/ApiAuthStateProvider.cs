@@ -39,7 +39,8 @@ namespace MemesPlaceWeb.Providers
             if (savedToken == null)
                 return new List<Claim>();
             var tokenConten = jwtSecurityTokenHandler.ReadJwtToken(savedToken);
-            if(tokenConten.ValidTo< DateTime.UtcNow)
+          
+          if(tokenConten.ValidTo> DateTime.UtcNow)
                 return new List<Claim>();
 
             var claims = tokenConten.Claims.ToList();

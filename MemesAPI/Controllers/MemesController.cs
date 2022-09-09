@@ -41,7 +41,7 @@ namespace MemesAPI.Controllers
           {
               return NotFound();
           }
-            var memes = await _context.Memes.OrderBy(m => m.Date).Where(z=>z.Name.Contains(memeParameters.name)).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+            var memes = await _context.Memes.OrderBy(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
           List<MemeDTO> result = new List<MemeDTO>();
             foreach (var meme in memes)
             {
@@ -132,8 +132,8 @@ namespace MemesAPI.Controllers
         // POST: api/Memes
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
-        [HttpPost]
-        public async Task<ActionResult<Meme>> PostMeme(MemeAddDTO memeDTO)
+        [HttpPost("upload")]
+        public async Task<ActionResult<MemeDTO>> PostMeme(MemeAddDTO memeDTO)
         {
             var meme = new Meme();
           if (_context.Memes == null)
@@ -147,8 +147,12 @@ namespace MemesAPI.Controllers
             meme.Date = new DateTime().Date;
             _context.Memes.Add(meme);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetMeme", new { id = meme.Id }, meme);
+            var memedto=new MemeDTO();
+            memedto.Desc=memeDTO.Description;
+            memedto.imgURL = memeDTO.URLIMG;
+            memedto.Name = memeDTO.Name;
+            memedto.Id = meme.Id;
+            return Ok(memedto);
         }
 
         // DELETE: api/Memes/5
