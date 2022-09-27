@@ -18,13 +18,13 @@
         <AuthorizeView>
             <Authorized>
                 <div class="nav-item px-3">
-                    
+
                     <NavLink class="nav-link" href="">
                         <span class="oi oi-person" aria-hidden="true"></span> @context.User?.Identity?.Name
                     </NavLink>
                 </div>
                 <div class="nav-item px-3">
-                    
+
                     <NavLink class="nav-link" href="users/logout">
                         <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
                     </NavLink>
@@ -36,13 +36,13 @@
                     </NavLink>
                 </div>
             </Authorized>
-           
+
             <NotAuthorized>
                 <div class="nav-item px-3">
-            <NavLink class="nav-link" href="users/login">
-                <span class="oi oi-account-login" aria-hidden="true"></span> Login
-            </NavLink>
-        </div>
+                    <NavLink class="nav-link" href="users/login">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
+                </div>
                 <div class="nav-item px-3">
                     <NavLink class="nav-link" href="users/register">
                         <span class="oi oi-person" aria-hidden="true"></span> Register
@@ -50,13 +50,13 @@
                 </div>
             </NotAuthorized>
         </AuthorizeView>
-        
-        
+
+
     </nav>
 </div>
 
 @code {
-    private bool collapseNavMenu = true;
+    private bool collapseNavMenu = false;
 
     private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
 

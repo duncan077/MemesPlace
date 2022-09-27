@@ -1,47 +1,71 @@
 ﻿@page "/users/register"
 @inject IClient httpclient
+@inject NavigationManager _nav
+@using System.Text.RegularExpressions
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.WebUtilities
+
 <h3>Register</h3>
 
 @if(!string.IsNullOrEmpty(message)){
 
 <div class="alert-danger">@message</div>
 }
-<div class=card-body>
-    <EditForm Model="regModel" OnValidSubmit="RegisterPost">
-        <DataAnnotationsValidator/>
-        <ValidationSummary/>
-        <div class="form-group">
-            <label for="username">UserName</label>
-            <InputText class="form-control" @bind-Value="regModel.UserName"></InputText>
-            <ValidationMessage For="@(()=>regModel.UserName)"></ValidationMessage>
-        </div>
-        <div class="form-group">
-            <label for="email">Email Address</label>
-            <InputText class="form-control" @bind-Value="regModel.Email"></InputText>
-            <ValidationMessage For="@(()=>regModel.Email)"></ValidationMessage>
-        </div>
-        <div class="form-group">
-            <label for="pasword">Password</label>
-            <InputText class="form-control" type="password" @bind-Value="regModel.Password"></InputText>
-            <ValidationMessage For="@(()=>regModel.Password)"></ValidationMessage>
-        </div>
-    
-
-        <button type="submit" class="btn btn-primary btn-block">Register</button>
-
-    </EditForm>
-</div>
+<EditForm Model="@regModel" OnValidSubmit="@RegisterPost">
+<DataAnnotationsValidator/>
+<MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="UserName" 
+                              @bind-Value="regModel.UserName" For="@(() => regModel.UserName)"/>
+                <MudTextField Label="Email" Class="mt-3"
+                                  @bind-Value="regModel.Email" For="@(() => regModel.Email)" />
+                <MudTextField Label="Password" HelperText="Choose a strong password" Class="mt-3"
+                              @bind-Value="regModel.Password" For="@(() => regModel.Password)" InputType="InputType.Password"/>
+                
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Class="ml-auto">Register</MudButton>
+            </MudCardActions>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="5">
+        <MudPaper Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle2">Validation Summary</MudText>
+            @if (success)
+            {
+                <MudText Color="Color.Success">Success</MudText>
+            }
+            else
+            {
+                <MudText Color="@Color.Error">
+                    <ValidationSummary />
+                </MudText>
+            }
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" Align="Align.Center">
+            Fill out the form correctly to see the success message.
+        </MudText>
+    </MudItem>
+</MudGrid>
+</EditForm>
 
 @code {
+    bool success = false;
     UserDTO regModel = new UserDTO(); 
     string message = string.Empty;
-    private async Task RegisterPost(){
-       
+    public async Task RegisterPost(){
+
 
 
         try
         {
             await httpclient.RegisterAsync(regModel);
+            success = true;
+            _nav.NavigateTo("/users/login");
         }
         catch (ApiException ex)
         {

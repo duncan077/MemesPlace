@@ -3,6 +3,7 @@ using System;
 using MemesAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MemesAPI.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    partial class AppDBContextModelSnapshot : ModelSnapshot
+    [Migration("20220910150705_VideoADD")]
+    partial class VideoADD
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,6 +53,9 @@ namespace MemesAPI.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
+                    b.Property<string>("profilePic")
+                        .HasColumnType("longtext");
+
                     b.HasKey("Id");
 
                     b.HasIndex("MemeUserId");
@@ -67,11 +72,11 @@ namespace MemesAPI.Migrations
                     b.Property<DateTime>("DateTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("MemeId")
+                    b.Property<int>("Meme")
                         .HasColumnType("int");
 
-                    b.Property<string>("MemeUserId")
-                        .HasColumnType("varchar(255)");
+                    b.Property<int?>("MemeId")
+                        .HasColumnType("int");
 
                     b.Property<string>("UserName")
                         .IsRequired()
@@ -81,39 +86,7 @@ namespace MemesAPI.Migrations
 
                     b.HasIndex("MemeId");
 
-                    b.HasIndex("MemeUserId");
-
                     b.ToTable("MemeLike");
-                });
-
-            modelBuilder.Entity("MemesAPI.Data.TagMeme", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("TagMeme");
-                });
-
-            modelBuilder.Entity("MemeTagMeme", b =>
-                {
-                    b.Property<int>("MemesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("MemesId", "TagsId");
-
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("MemeTagMeme");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -322,11 +295,9 @@ namespace MemesAPI.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("profilePic")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("signature")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.HasDiscriminator().HasValue("MemeUser");
@@ -343,28 +314,7 @@ namespace MemesAPI.Migrations
                 {
                     b.HasOne("MemesAPI.Data.Meme", null)
                         .WithMany("Likes")
-                        .HasForeignKey("MemeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MemesAPI.Data.MemeUser", null)
-                        .WithMany("Likes")
-                        .HasForeignKey("MemeUserId");
-                });
-
-            modelBuilder.Entity("MemeTagMeme", b =>
-                {
-                    b.HasOne("MemesAPI.Data.Meme", null)
-                        .WithMany()
-                        .HasForeignKey("MemesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("MemesAPI.Data.TagMeme", null)
-                        .WithMany()
-                        .HasForeignKey("TagsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MemeId");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -425,8 +375,6 @@ namespace MemesAPI.Migrations
 
             modelBuilder.Entity("MemesAPI.Data.MemeUser", b =>
                 {
-                    b.Navigation("Likes");
-
                     b.Navigation("Memes");
                 });
 #pragma warning restore 612, 618

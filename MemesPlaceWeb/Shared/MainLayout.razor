@@ -1,17 +1,86 @@
 ﻿@inherits LayoutComponentBase
+@using System.Security.Claims
+<MudThemeProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<Layout>
+    <LayoutHeader>
+        <Fields>
+            <Field Horizontal ColumnSize="ColumnSize.Is3.OnDesktop">
+    
+    <FieldBody  Margin="Margin.IsAuto">
+                <a class="navbar-brand" href="">MemesPlaceWeb</a>
+    </FieldBody>
+</Field>
+            <Field Horizontal ColumnSize="ColumnSize.Is1.OnDesktop">
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+            <FieldBody Margin="Margin.IsAuto">
+                <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="oi oi-home" aria-hidden="true"></span> Home
+            </NavLink>
+            </FieldBody>
+        </Field>
+       
 
-    <main>
-        <div class="top-row px-4">
-            <a href="https://docs.microsoft.com/aspnet/" target="_blank">About</a>
-        </div>
+        
+       
+        <AuthorizeView>
+            <Authorized>
+                    <Field Horizontal ColumnSize="ColumnSize.Is4.OnDesktop">
+                    <FieldBody  Margin="Margin.IsAuto">
+                       
+                            <span class="oi oi-person" aria-hidden="true"></span> @context.User.Identity.Name
+                        
+                    </FieldBody>
+        </Field>
+                    <Field Horizontal ColumnSize="ColumnSize.Is3.OnDesktop">
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
+            <FieldBody  Margin="Margin.IsAuto">
+                <NavLink class="nav-link" href="users/logout">
+                    <span class="oi oi-account-logout" aria-hidden="true"></span> Logout
+                </NavLink>
+            </FieldBody>
+        </Field>
+                    <Field Horizontal ColumnSize="ColumnSize.Is3.OnDesktop">
+        <FieldBody  Margin="Margin.IsAuto">
+            <NavLink class="nav-link" href="/upload">
+                        <span class="oi oi-image" aria-hidden="true"></span> upload
+                    </NavLink>
+            </FieldBody>
+        </Field>
+              
+            </Authorized>
+
+            <NotAuthorized>
+                    <Field Horizontal ColumnSize="ColumnSize.Is3.OnDesktop">
+                    <FieldBody  Margin="Margin.IsAuto">
+                       <NavLink class="nav-link" href="users/login">
+                        <span class="oi oi-account-login" aria-hidden="true"></span> Login
+                    </NavLink>
+                    </FieldBody>
+                </Field>
+                    <Field Horizontal ColumnSize="ColumnSize.Is3.OnDesktop">
+                    <FieldBody  Margin="Margin.IsAuto">
+                        <NavLink class="nav-link" href="users/register">
+                            <span class="oi oi-person" aria-hidden="true"></span> Register
+                        </NavLink>
+                    </FieldBody>
+                </Field>
+               
+            </NotAuthorized>
+        </AuthorizeView>
+        </Fields>
+    </LayoutHeader>
+    <LayoutContent>
+        <main>
+            
+
+            <article class="content px-4">
+                @Body
+            </article>
+        </main>
+    </LayoutContent>
+    <LayoutFooter>
+        Footer
+    </LayoutFooter>
+</Layout>

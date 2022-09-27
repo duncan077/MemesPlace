@@ -16,6 +16,6 @@ namespace MemesAPI.Data
         public string UserName { get; set; }
         public DateTime DateTime { get; set; }
         [ForeignKey(nameof(Meme))]
-        public int Meme { get; set; }
+        public int MemeId { get; set; }
     }
 }

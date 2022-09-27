@@ -1,6 +1,9 @@
 ﻿@page "/upload"
 @inject NavigationManager nav
 @inject IMemesService memeService
+@inject ISnackbar Snackbar
+@using System.ComponentModel.DataAnnotations
+
 <h3>MemeUpload</h3>
 
 @if (!string.IsNullOrEmpty(message))
@@ -9,56 +12,125 @@
     <div class="alert-danger">@message</div>
 }
 
-        <div class=card-body >
-            <EditForm Model="memeAddDTO" OnValidSubmit="MemePost">
-            <DataAnnotationsValidator />
-             <ValidationSummary />
-              <div class="form-group">
-              <label for="name">Title</label>
-              <InputText class="form-control" @bind-Value="memeAddDTO.Name"></InputText>
-               <ValidationMessage For="@(()=>memeAddDTO.Name)"></ValidationMessage>
-                </div>
-             <div class="form-group">
-            <label for="desc">Description</label>
-            <InputText class="form-control" @bind-Value="memeAddDTO.Description"></InputText>
-                 <ValidationMessage For="@(()=>memeAddDTO.Description)"></ValidationMessage>
-                  </div>
-                  <div class="form-group">
-             <label for="name">url</label>
-            <InputText class="form-control" @bind-Value="memeAddDTO.Urlimg"></InputText>
-            <ValidationMessage For="@(()=>memeAddDTO.Urlimg)"></ValidationMessage>
-                  </div>
+
+
+
+<MudPaper @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass"  Outlined="true" Class="@DragClass">
+    @if (!Clearing)
+    {
+        <InputFile OnChange="OnInputFileChanged" multiple  class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+    }
+    <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+    @foreach (var file in memes)
+    {
+        <MudGrid>
+    <MudItem xs="12" sm="7">
+        <MudCard>
+            <MudCardContent>
+                <MudTextField Label="Title" 
+                              @bind-Value="file.Name" For="@(() => file.Name)"/>
+                <MudTextField Label="Description" Class="mt-3"
+                              @bind-Value="file.Description" For="@(() => file.Description)"/>
+                              @if(file.IsVideo)
+                              {
+                                  <video src="@FormImgtoUrl(file.Imgfile)"></video>
+                              }else{
+                                  <img src="@FormImgtoUrl(file.Imgfile)" height="600" width="400">
+                              }
+               
+            </MudCardContent>
+           
+        </MudCard>
+    </MudItem>
+    
+</MudGrid>
+    }
+</MudPaper>
+<MudToolBar DisableGutters="true" Class="gap-4">
+    <MudButton OnClick="MemePost" Disabled="@(!memes.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
+    <MudButton OnClick="Clear" Disabled="@(!memes.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
+</MudToolBar>
+
+
+
+
        
-
-
-        <button type="submit" class="btn btn-primary btn-block">Upload</button>
-
-             </EditForm>
-        </div>
 
 
 @code {
     string message;
-    MemeAddDTO memeAddDTO = new MemeAddDTO();
+
+    List<MemeAddDTO> memes = new List<MemeAddDTO>();
+
+    private bool Clearing = false;
+    private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
+    private string DragClass = DefaultDragClass;
 
 
+    private async void OnInputFileChanged(InputFileChangeEventArgs e)
+    {
+        ClearDragClass();
+        var files = e.GetMultipleFiles();
+        foreach(var file in files)
+        {
+            var buffers = new byte[file.Size];
+            await file.OpenReadStream(200000000).ReadAsync(buffers);
+
+            memes.Add(new MemeAddDTO {
+                     Imgfile=new ImageFile{Data=buffers,Format=file.ContentType,Size=file.Size}, IsFile=true,IsVideo=(file.ContentType.Contains("mp4"))
+        });
+        }
+        StateHasChanged();
+    }
+
+    private async Task Clear()
+    {
+        Clearing = true;
+        memes.Clear();
+        ClearDragClass();
+        await Task.Delay(100);
+        Clearing = false;
+    }
+
+
+    private void SetDragClass()
+    {
+        DragClass = $"{DefaultDragClass} mud-border-primary";
+    }
+    private string FormImgtoUrl(ImageFile file)
+    {
+        return $"data:{file.Format};base64,{Convert.ToBase64String(file.Data)}";
+    }
+
+    private void ClearDragClass()
+    {
+        DragClass = DefaultDragClass;
+    }
     private async Task MemePost(){
-        try
-        {
-            var response =await memeService.AddMeme(memeAddDTO);
-            if(response.IsSuccess)
+      
+          //  await MessageService.Info("Thank you for filling the form.");
+            try
             {
-                nav.NavigateTo("/");
+                var response = await memeService.AddMeme(memes);
+                if (response.FirstOrDefault().IsSuccess)
+                {
+                    nav.NavigateTo("/");
+                }
+                else
+                {
+                    message = response.FirstOrDefault().Message;
+                }
+                 Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+        Snackbar.Add("TODO: Upload your files!", Severity.Normal);
             }
-            else{
-                message = response.Message;
-            }
-        }
-        catch (ApiException ex)
-        {
+            catch (ApiException ex)
+            {
 
-            message = ex.Message;
+                message = ex.Message;
+            }
+           
         }
+        
     }
 
 }

@@ -9,6 +9,9 @@ using AspNetCoreRateLimit;
 using MemesAPI.BgService;
 using System.Configuration;
 using AutoMapper;
+using MemesAPI.Repository;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,7 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddControllers();
 builder.Services.AddHostedService<TrendingService>();
+builder.Services.AddScoped<IFileRepository, ImgurRepository>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -58,6 +62,8 @@ builder.Services.AddAuthentication(options =>
     opt.ClientSecret = googleAuth["ClientSecret"];
     opt.SignInScheme = IdentityConstants.ExternalScheme;
 });
+builder.Services.AddAuthorization();
+
 builder.Services.ConfigureCors();
 var app = builder.Build();
 

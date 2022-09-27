@@ -1,21 +1,64 @@
-﻿
-<div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
-    <div class="card">
-        <div class="card-body">
-            <h4 class="card-title" style="text-align: center;">@meme.Name</h4>
-            <h6 class="text-muted card-subtitle mb-2">@meme.Desc</h6>
-            <div class="row" style="text-align: center;transform-origin: center;">
-                <div class="col"><img style="min-width: 300px;height: 300px;" src=@meme.ImgURL /></div>
-            </div>
-            <div class="row" style="text-align: center;padding-left: 0px;border-width: 0px;">
-                <div class="col"><p>Created: @meme.Date</p></div>
-            </div>
-        </div>
-    </div>
-</div>
+﻿@inject IMemesService memeService
+@using System.Security.Claims
+<MudCard>
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Color="Color.Secondary" Image="@meme.ImgProfile" >@meme.UserName</MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.body1">@meme.Name</MudText>
+            <MudText Typo="Typo.body2">@meme.Description</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <AuthorizeView>
+                <Authorized>
+                    @if (context.User.Identity.Name==meme.UserName){
+<MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
+                    } </Authorized>
+                   
+            </AuthorizeView>
+           
+        </CardHeaderActions>
+    </MudCardHeader>
+  @if(meme.IsVideo)
+  {
+        <video controls="" autoplay=""height="600" name="media"><source src="@meme.Urlimg" type="video/mp4"></video>
+  }else{
+<MudCardMedia Image="@meme.Urlimg" Height="600"  />
+  }
+    
+    <MudCardContent>
+        @foreach (var item in meme.Tags)
+        {
+            <MudText Typo="Typo.body2">#@item</MudText>
+        }  
+        
+    </MudCardContent>
+    <MudCardActions>
+        @if(meme.Like){
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Error" OnClick="Like" />
+        }else{
+            <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" OnClick="Like" />
+        }
+       
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+    </MudCardActions>
+</MudCard>
 @code {
     [Parameter]
-   public MemeDTO meme { get; set; }
-
-
+    public MemeDTO meme { get; set; }
+    [Inject] private IDialogService DialogService { get; set; }
+    private async Task Like()
+    {
+        var response = await memeService.Like(meme.Id);
+        if (!response.IsSuccess)
+        {
+            bool? result = await DialogService.ShowMessageBox(
+              "Warning",
+              "Error Liking the meme"
+              );
+            
+            StateHasChanged();
+        }
+    }
 }
