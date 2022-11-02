@@ -44,7 +44,7 @@ namespace MemesPlaceWeb.Providers
                 return new List<Claim>();
 
             var claims = tokenConten.Claims.ToList();
-           
+           claims.Add(new Claim(ClaimTypes.Name, tokenConten.Subject));
             return claims;
         }
 

@@ -43,34 +43,16 @@ namespace MemesAPI.Controllers
                 
         public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemes([FromQuery] MemeParameters memeParameters)
         {
-          if (_context.Memes == null)
-          {
-              return NotFound();
-          }
-            var memes = await _context.Memes.Include(l=>l.Likes).Include(t=>t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
-          List<MemeDTO> result = new List<MemeDTO>();
-            foreach (var meme in memes)
-            {
-                var dto = _mapper.Map<MemeDTO>(meme);
-                if(meme.Tags.Count>0)
-                {
-                    foreach (var item in meme.Tags)
-                    {
-                        dto.Tags.Add(item.Name);
-                    }
-                }
-
-                dto.likeCount = meme.Likes.Count();
-
-                result.Add(dto);
-            }
-          
-            
-            return Ok(result);
+            return await GetMemesMethod(memeParameters);
         }
         [HttpGet("auth")]
         [Authorize]
         public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesAuth([FromQuery] MemeParameters memeParameters)
+        {
+            return await GetMemesMethod(memeParameters);
+        }
+
+        private async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesMethod(MemeParameters memeParameters)
         {
             if (_context.Memes == null)
             {
@@ -106,34 +88,16 @@ namespace MemesAPI.Controllers
         [AllowAnonymous]
         public async Task<ActionResult<MemeDTO>> GetMeme(int id)
         {
-          if (_context.Memes == null)
-          {
-              return NotFound();
-          }
-            var meme = await _context.Memes.FindAsync(id);
-
-            if (meme == null)
-            {
-                return NotFound();
-            }
-            var dto = _mapper.Map<MemeDTO>(meme);
-            if (meme.Tags.Count > 0)
-            {
-                foreach (var item in meme.Tags)
-                {
-                    dto.Tags.Add(item.Name);
-                }
-            }
-            dto.imgProfile =  _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
-            dto.likeCount = meme.Likes.Count();
-            if (User.Identity.IsAuthenticated)
-                dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
-
-            return dto;
+            return await GetMemeMethod(id);
         }
         [HttpGet("auth/{id}")]
         [Authorize]
         public async Task<ActionResult<MemeDTO>> GetMemeAuth(int id)
+        {
+            return await GetMemeMethod(id);
+        }
+
+        private async Task<ActionResult<MemeDTO>> GetMemeMethod(int id)
         {
             if (_context.Memes == null)
             {

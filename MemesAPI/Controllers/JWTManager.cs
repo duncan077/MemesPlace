@@ -27,7 +27,7 @@ namespace MemesAPI.Controllers
                 var securitySecret = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Secret"]));
                 var credentials = new SigningCredentials(securitySecret, SecurityAlgorithms.HmacSha256);
                 var roles = await _userManager.GetRolesAsync(user);
-                
+                var userClaims =  await _userManager.GetClaimsAsync(user);
                 var rolesClaims = roles.Select(q => new Claim(ClaimTypes.Role, q)).ToList();
                 var claims = new List<Claim>
             {
@@ -36,7 +36,7 @@ namespace MemesAPI.Controllers
                 new Claim(JwtRegisteredClaimNames.Jti,Guid.NewGuid().ToString()),
                 new Claim(JwtRegisteredClaimNames.Email,user.Email),
                 new Claim("uid", user.Id)
-            }.Union(rolesClaims);
+            }.Union(userClaims).Union(rolesClaims);
 
                 var token = new JwtSecurityToken(
                     issuer: configuration["JwtSettings:Issuer"],
