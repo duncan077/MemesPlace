@@ -235,23 +235,24 @@ namespace MemesAPI.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response<bool>>> DeleteMeme(int id)
         {
+            Response<bool> response = new Response<bool>() { Data = false };
             if (_context.Memes == null)
             {
-                return NotFound();
+                return NotFound(response);
             }
             var meme = await _context.Memes.FindAsync(id);
             if (meme == null)
             {
-                return NotFound();
+                return NotFound(response);
             }
             if (meme.UserName != User.Identity.Name)
             { 
-            return Unauthorized();
+            return Unauthorized(response);
             }
             _context.Memes.Remove(meme);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            response =new Response<bool>(){ Data = true,IsSuccess=true,Message=$"Meme {id} Deleted" };
+            return Ok(response);
         }
         private async Task GetTags(List<string> tags , Meme meme)
         {
