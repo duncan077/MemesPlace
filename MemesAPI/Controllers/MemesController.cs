@@ -42,18 +42,18 @@ namespace MemesAPI.Controllers
         
         [AllowAnonymous]
                 
-        public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemes([FromQuery] MemeParameters memeParameters)
+        public async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemes([FromQuery] MemeParameters memeParameters)
         {
             return await GetMemesMethod(memeParameters);
         }
         [HttpGet("auth")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesAuth([FromQuery] MemeParameters memeParameters)
+        public async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemesAuth([FromQuery] MemeParameters memeParameters)
         {
             return await GetMemesMethod(memeParameters);
         }
 
-        private async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesMethod(MemeParameters memeParameters)
+        private async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemesMethod(MemeParameters memeParameters)
         {
             if (_context.Memes == null)
             {
@@ -87,43 +87,58 @@ namespace MemesAPI.Controllers
         // GET: api/Memes/5
         [HttpGet("{id}")]
         [AllowAnonymous]
-        public async Task<ActionResult<MemeDTO>> GetMeme(int id)
+        public async Task<ActionResult<Response<MemeDTO>>> GetMeme(int id)
         {
             return await GetMemeMethod(id);
         }
         [HttpGet("auth/{id}")]
         [Authorize]
-        public async Task<ActionResult<MemeDTO>> GetMemeAuth(int id)
+        public async Task<ActionResult<Response<MemeDTO>>> GetMemeAuth(int id)
         {
             return await GetMemeMethod(id);
         }
 
-        private async Task<ActionResult<MemeDTO>> GetMemeMethod(int id)
+        private async Task<ActionResult<Response<MemeDTO>>> GetMemeMethod(int id)
         {
-            if (_context.Memes == null)
+            var response = new Response<MemeDTO>();
+            try
             {
-                return NotFound();
-            }
-            var meme = await _context.Memes.FindAsync(id);
-
-            if (meme == null)
-            {
-                return NotFound();
-            }
-            var dto = _mapper.Map<MemeDTO>(meme);
-            if (meme.Tags.Count > 0)
-            {
-                foreach (var item in meme.Tags)
+                if (_context.Memes == null)
                 {
-                    dto.Tags.Add(item.Name);
+                    return NotFound(response);
                 }
-            }
-            dto.imgProfile = _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
-            dto.likeCount = meme.Likes.Count();
-            if (User.Identity.IsAuthenticated)
-                dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                var meme = await _context.Memes.FindAsync(id);
 
-            return dto;
+                if (meme == null)
+                {
+                    return NotFound(response);
+                }
+                var dto = _mapper.Map<MemeDTO>(meme);
+                if (meme.Tags.Count > 0)
+                {
+                    foreach (var item in meme.Tags)
+                    {
+                        dto.Tags.Add(item.Name);
+                    }
+                }
+                dto.imgProfile = _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
+                dto.likeCount = meme.Likes.Count();
+                if (User.Identity.IsAuthenticated)
+                    dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                response.IsSuccess = true;
+                response.Data= dto;
+                return response;
+
+            }
+            catch (Exception ex)
+            {
+                response.Error=ex.Message;
+                response.Message = "Error retriving meme";
+                return response;
+
+            }
+           
+            
         }
 
         [HttpPost("like/{id}")]
