@@ -11,8 +11,9 @@ using MemesAPI.Extension;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MemesAPI.Models.Meme;
-using MemesAPI.Repository;
 using Microsoft.CodeAnalysis;
+using MemesAPI.Repository.Interface;
+using System.Net;
 
 namespace MemesAPI.Controllers
 {
@@ -38,7 +39,7 @@ namespace MemesAPI.Controllers
 
         // GET: api/Memes
         [HttpGet]
-        [Authorize]
+        
         [AllowAnonymous]
                 
         public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemes([FromQuery] MemeParameters memeParameters)
@@ -171,7 +172,7 @@ namespace MemesAPI.Controllers
         [HttpPost("upload")]
         [RequestSizeLimit(200 * 1024 * 1024)]
         [RequestFormLimits(MultipartBodyLengthLimit = 200 * 1024 * 1024)]
-        public async Task<ActionResult<List<MemeDTO>>> PostMeme(List<MemeAddDTO> memeDTO)
+        public async Task<ActionResult<List<Response<MemeDTO>>>> PostMeme(List<MemeAddDTO> memeDTO)
         {
            
           if (_context.Memes == null)
@@ -180,36 +181,50 @@ namespace MemesAPI.Controllers
           }
             try
             {
-                var memedto = new List<MemeDTO>();
+                var memeResponse = new List<Response<MemeDTO>>();
                 foreach (var item in memeDTO)
                 {
+                    Response<string> upload= new Response<string>();
                     var meme = _mapper.Map<Meme>(item);
                     meme.UserName = User.Identity.Name;
                     meme.Date = DateTime.UtcNow;
-                    if(item.IsFile)
+                    if (item.IsFile)
                     {
-                      meme.URLIMG= await  fileRepository.UploadFile(item.Imgfile);
+                         upload = await fileRepository.UploadFile(item.Imgfile);
+                        if (upload.IsSuccess)
+                        {
+                            meme.URLIMG = upload.Data;
+                                  meme.Format = item.Imgfile.format;
+                        }
                     }
                     else
                     {
                         meme.URLIMG = item.URLIMG;
                     }
-                    if(meme.URLIMG=="")
-                        return BadRequest();
-                    await GetTags(item.Tags, meme);
-                    _context.Memes.Add(meme);
-                    await _context.SaveChangesAsync();
+                    if (meme.URLIMG == "" || !upload.IsSuccess)
+                    {
+                        memeResponse.Add(new Response<MemeDTO> { IsSuccess = false, Error = upload.Error, Message = upload.Message, Data = new MemeDTO() });
+                    }
+                    else
+                    {
+                        await GetTags(item.Tags, meme);
+                        _context.Memes.Add(meme);
+                        memeResponse.Add(new Response<MemeDTO>() { Data= _mapper.Map<MemeDTO>(meme) , IsSuccess=true, Message="Upload Successful"});
+                    }
 
-                    memedto = _mapper.Map<List<MemeDTO>>(meme);
+                    
 
                 }
-                
-                return Ok(memedto);
+                await _context.SaveChangesAsync();
+                return Ok(memeResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return BadRequest();
+                var memeResponse = new List<Response<MemeDTO>>
+                {
+                    new Response<MemeDTO>() { Error = ex.Message }
+                };
+                return BadRequest(memeResponse);
             }
             
            
@@ -218,7 +233,7 @@ namespace MemesAPI.Controllers
         // DELETE: api/Memes/5
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeme(int id)
+        public async Task<ActionResult<Response<bool>>> DeleteMeme(int id)
         {
             if (_context.Memes == null)
             {

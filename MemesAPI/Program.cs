@@ -12,14 +12,15 @@ using AutoMapper;
 using MemesAPI.Repository;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using MemesAPI.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = "server=localhost;user=meme;password=meme;database=memesplace";
-var serverVersion = ServerVersion.AutoDetect(connectionString);
+var connectionString = "Data Source=DESKTOP-3ALPJN4;Initial Catalog=MemesPlace;Integrated Security=True;Pooling=False;Encrypt=False";
+
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
-                .UseMySql(connectionString, serverVersion)
+                .UseSqlServer(connectionString)
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)

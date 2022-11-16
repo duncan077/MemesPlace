@@ -103,12 +103,12 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body);
+        System.Threading.Tasks.Task UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -841,7 +841,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body)
+        public virtual System.Threading.Tasks.Task UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body)
         {
             return UploadAsync(body, System.Threading.CancellationToken.None);
         }
@@ -849,7 +849,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes/upload");
@@ -864,7 +864,6 @@ namespace MemesPlaceWeb.Services.Base
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
-                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -889,12 +888,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
-                            if (objectResponse_.Object == null)
-                            {
-                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
-                            }
-                            return objectResponse_.Object;
+                            return;
                         }
                         else
                         {
@@ -1065,11 +1059,11 @@ namespace MemesPlaceWeb.Services.Base
     public partial class LoginUserDTO
     {
         [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string UserName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Password { get; set; }
 
     }
@@ -1078,7 +1072,7 @@ namespace MemesPlaceWeb.Services.Base
     public partial class MemeAddDTO
     {
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1128,6 +1122,9 @@ namespace MemesPlaceWeb.Services.Base
         [Newtonsoft.Json.JsonProperty("isVideo", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsVideo { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("format", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Format { get; set; }
+
         [Newtonsoft.Json.JsonProperty("tags", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string> Tags { get; set; }
 
@@ -1153,7 +1150,7 @@ namespace MemesPlaceWeb.Services.Base
         public string Password { get; set; }
 
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
 
     }

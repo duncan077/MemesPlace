@@ -29,7 +29,7 @@ namespace MemesPlaceWeb.Services.Meme
                       var data = await client.AuthAllAsync(1, "", 10);
                       response = new Response<List<MemeDTO>>
                       {
-                          Result = data.ToList(),
+                          Data = data.ToList(),
                           IsSuccess = true
                       };
                   }
@@ -38,7 +38,7 @@ namespace MemesPlaceWeb.Services.Meme
                       var data = await client.MemesAllAsync(1, "", 10);
                       response = new Response<List<MemeDTO>>
                       {
-                          Result = data.ToList(),
+                          Data = data.ToList(),
                           IsSuccess = true
                       };
                   }
@@ -64,7 +64,7 @@ namespace MemesPlaceWeb.Services.Meme
                     var data = await client.AuthAsync(id);
                     response = new Response<MemeDTO>
                     {
-                        Result = data,
+                        Data = data,
                         IsSuccess = true
                     };
                 }
@@ -73,7 +73,7 @@ namespace MemesPlaceWeb.Services.Meme
                     var data = await client.MemesGETAsync(id);
                     response = new Response<MemeDTO>
                     {
-                        Result = data,
+                        Data = data,
                         IsSuccess = true
                     };
                 }
@@ -95,7 +95,7 @@ namespace MemesPlaceWeb.Services.Meme
 
                 foreach (var item in data)
                 {
-                    response.Add(new Response<MemeDTO> { IsSuccess = true, Result = item });
+                    response.Add(new Response<MemeDTO> { IsSuccess = true, Data = item });
                 }
 
             }

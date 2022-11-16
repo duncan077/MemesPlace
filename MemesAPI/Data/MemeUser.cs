@@ -14,6 +14,6 @@ namespace MemesAPI.Data
         public string profilePic { get; set; } = "";
         public int Karma { get; set; } = 0;
         public virtual ICollection<Meme>? Memes { get; set; }
-        public virtual ICollection<MemeLike> Likes { get; set; }
+        public virtual ICollection<MemeLike>? Likes { get; set; }
     }
 }
