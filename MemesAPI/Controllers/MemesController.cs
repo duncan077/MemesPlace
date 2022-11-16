@@ -55,33 +55,45 @@ namespace MemesAPI.Controllers
 
         private async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemesMethod(MemeParameters memeParameters)
         {
-            if (_context.Memes == null)
+            List<Response<MemeDTO>> response = new List<Response<MemeDTO>>();
+            try
             {
-                return NotFound();
-            }
-            var memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
-            List<MemeDTO> result = new List<MemeDTO>();
-            foreach (var meme in memes)
-            {
-                var dto = _mapper.Map<MemeDTO>(meme);
-                if (meme.Tags.Count > 0)
+                if (_context.Memes == null)
                 {
-                    foreach (var item in meme.Tags)
+                    return NotFound(response);
+                }
+                var memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                
+                foreach (var meme in memes)
+                {
+                    var dto = _mapper.Map<MemeDTO>(meme);
+                    if (meme.Tags.Count > 0)
                     {
-                        dto.Tags.Add(item.Name);
+                        foreach (var item in meme.Tags)
+                        {
+                            dto.Tags.Add(item.Name);
+                        }
                     }
+
+                    dto.likeCount = meme.Likes.Count();
+                    if (User.Identity.IsAuthenticated)
+                        dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+
+                    var responseDTO = new Response<MemeDTO>() { IsSuccess = true, Data = dto, Message = "Found" };
+                    response.Add(responseDTO);
                 }
 
-                dto.likeCount = meme.Likes.Count();
-                if (User.Identity.IsAuthenticated)
-                    dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
 
-
-                result.Add(dto);
+                return Ok(result);
             }
+            catch (Exception ex)
+            {
 
-
-            return Ok(result);
+                response.Error = ex.Message;
+                response.Message = "Error retriving memes";
+                return response;
+            }
+            
         }
 
         // GET: api/Memes/5
