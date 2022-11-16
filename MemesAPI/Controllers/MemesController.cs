@@ -128,42 +128,54 @@ namespace MemesAPI.Controllers
 
         [HttpPost("like/{id}")]
         [Authorize]
-        public async Task<ActionResult> LikeMeme(int id)
+        public async Task<ActionResult<Response<bool>>> LikeMeme(int id)
         {
-            
-            if (_context.Memes == null)
+            try
             {
-                return NotFound();
-            }
-            var meme = await _context.Memes.Include(m=>m.Likes).FirstAsync(m=>m.Id==id);
-            MemeUser user = (MemeUser)_context.Users.Where(x=>x.UserName.Equals(User.Identity.Name)).First();
-            
-            if (meme == null)
-            {
-                return NotFound();
-            }
-            var like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
-            if (like)
-            {
+                if (_context.Memes == null)
+                {
+                    return NotFound();
+                }
+                Response<bool> response = new Response<bool> { Data = false };
+                var meme = await _context.Memes.Include(m => m.Likes).FirstAsync(m => m.Id == id);
+                MemeUser user = (MemeUser)_context.Users.Where(x => x.UserName.Equals(User.Identity.Name)).First();
 
-                _context.MemeLike.Remove(_context.MemeLike.First(m => m.UserName == User.Identity.Name));
-                _context.SaveChanges();
-            }
-            else
-            {
-                 var liked = new MemeLike();
-                liked.UserName = User.Identity.Name;
-                liked.MemeId = id;
-                liked.DateTime = DateTime.UtcNow;
-                 _context.MemeLike.Add(liked);
+                if (meme == null)
+                {
+                    return NotFound(response);
+                }
+                var like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                if (like)
+                {
+
+                    _context.MemeLike.Remove(_context.MemeLike.First(m => m.UserName == User.Identity.Name));
+                    _context.SaveChanges();
+                    response.Data = false;
+                }
+                else
+                {
+                    var liked = new MemeLike();
+                    liked.UserName = User.Identity.Name;
+                    liked.MemeId = id;
+                    liked.DateTime = DateTime.UtcNow;
+                    _context.MemeLike.Add(liked);
+
+                    _context.SaveChanges();
+                    response.Data = true;
+                }
                 
-                _context.SaveChanges();
+                response.IsSuccess = true;
+                response.Message = "Like/Unlike successfully";
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new Response<bool> { Data = false, Message = "Error on like post", Error = ex.Message };
+                return BadRequest(response);
                 
             }
-
-
-
-            return Ok();
+            
         }
 
         // POST: api/Memes
