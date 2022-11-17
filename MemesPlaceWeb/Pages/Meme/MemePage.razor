@@ -28,7 +28,11 @@
     protected override async Task OnInitializedAsync()
     {
         var res =await mS.GetMemes();
-        memes=(res.Data.ToList());
+        foreach (var item in res)
+        {
+            if (item.IsSuccess)
+                memes.Add(item.Data);
+        }
         StateHasChanged();
     }
 }
