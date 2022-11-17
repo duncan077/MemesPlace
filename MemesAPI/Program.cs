@@ -20,7 +20,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
-                .UseSqlServer(builder.Configuration["ConnectionString"])
+                .UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString"))
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)
