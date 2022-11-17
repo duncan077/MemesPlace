@@ -15,12 +15,10 @@ using Microsoft.AspNetCore.Authorization;
 using MemesAPI.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
-
-
-
+var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
-                .UseSqlServer(Environment.GetEnvironmentVariable("ConnectionString"))
+                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)

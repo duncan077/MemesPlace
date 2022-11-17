@@ -5,7 +5,7 @@ using MemesAPI.Models.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
-using NuGet.Protocol;
+
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
