@@ -7,11 +7,9 @@ using System.Text;
 using MemesAPI.Extension;
 
 using MemesAPI.BgService;
-using System.Configuration;
-using AutoMapper;
+
 using MemesAPI.Repository;
-using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+
 using MemesAPI.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
