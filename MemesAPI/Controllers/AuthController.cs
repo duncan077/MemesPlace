@@ -34,7 +34,7 @@ namespace MemesAPI.Controllers
 
         [HttpPost]
         [Route("register")]
-        public async Task<IActionResult> Register(UserDTO userDTO)
+        public async Task<ActionResult<UserDTO>> Register(UserDTO userDTO)
         {
             try{
                 var user = new MemeUser();

@@ -4,6 +4,9 @@
 // </auto-generated>
 //----------------------
 
+using BooleanResponse = MemesPlaceWeb.Services.Base.Response<bool>;
+using MemeDTOResponse = MemesPlaceWeb.Services.Base.Response<MemesPlaceWeb.Services.Base.MemeDTO>;
+
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
 #pragma warning disable 472 // Disable "CS0472 The result of the expression is always 'false' since a value of type 'Int32' is never equal to 'null' of type 'Int32?'
@@ -22,12 +25,12 @@ namespace MemesPlaceWeb.Services.Base
     {
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(UserDTO body);
+        System.Threading.Tasks.Task<UserDTO> RegisterAsync(UserDTO body);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task RegisterAsync(UserDTO body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<UserDTO> RegisterAsync(UserDTO body, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -49,66 +52,66 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> MemesAllAsync(int? pageNumber, string name, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> AuthAllAsync(int? pageNumber, string name, int? pageSize);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MemeDTO> MemesGETAsync(int id);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MemeDTO> MemesGETAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task MemesDELETEAsync(int id);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task MemesDELETEAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MemeDTO> AuthAsync(int id);
+        System.Threading.Tasks.Task<MemeDTOResponse> MemesGETAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<MemeDTO> AuthAsync(int id, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<MemeDTOResponse> MemesGETAsync(int id, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LikeAsync(int id);
-
-        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task LikeAsync(int id, System.Threading.CancellationToken cancellationToken);
-
-        /// <returns>Success</returns>
-        /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body);
+        System.Threading.Tasks.Task<BooleanResponse> MemesDELETEAsync(int id);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<BooleanResponse> MemesDELETEAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<MemeDTOResponse> AuthAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<MemeDTOResponse> AuthAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResponse> LikeAsync(int id);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<BooleanResponse> LikeAsync(int id, System.Threading.CancellationToken cancellationToken);
+
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body);
+
+        /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
+        /// <returns>Success</returns>
+        /// <exception cref="ApiException">A server side error occurred.</exception>
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken);
 
     }
 
@@ -141,7 +144,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task RegisterAsync(UserDTO body)
+        public virtual System.Threading.Tasks.Task<UserDTO> RegisterAsync(UserDTO body)
         {
             return RegisterAsync(body, System.Threading.CancellationToken.None);
         }
@@ -149,7 +152,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task RegisterAsync(UserDTO body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<UserDTO> RegisterAsync(UserDTO body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/auth/register");
@@ -164,6 +167,7 @@ namespace MemesPlaceWeb.Services.Base
                     content_.Headers.ContentType = System.Net.Http.Headers.MediaTypeHeaderValue.Parse("application/json");
                     request_.Content = content_;
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -188,7 +192,12 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<UserDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -366,7 +375,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> MemesAllAsync(int? pageNumber, string name, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize)
         {
             return MemesAllAsync(pageNumber, name, pageSize, System.Threading.CancellationToken.None);
         }
@@ -374,7 +383,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes?");
@@ -424,7 +433,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTOResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -453,7 +462,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> AuthAllAsync(int? pageNumber, string name, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize)
         {
             return AuthAllAsync(pageNumber, name, pageSize, System.Threading.CancellationToken.None);
         }
@@ -461,7 +470,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes/auth?");
@@ -511,7 +520,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTOResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -540,7 +549,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MemeDTO> MemesGETAsync(int id)
+        public virtual System.Threading.Tasks.Task<MemeDTOResponse> MemesGETAsync(int id)
         {
             return MemesGETAsync(id, System.Threading.CancellationToken.None);
         }
@@ -548,7 +557,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MemeDTO> MemesGETAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MemeDTOResponse> MemesGETAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -589,7 +598,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<MemeDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MemeDTOResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -618,7 +627,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task MemesDELETEAsync(int id)
+        public virtual System.Threading.Tasks.Task<BooleanResponse> MemesDELETEAsync(int id)
         {
             return MemesDELETEAsync(id, System.Threading.CancellationToken.None);
         }
@@ -626,7 +635,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task MemesDELETEAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<BooleanResponse> MemesDELETEAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -642,6 +651,7 @@ namespace MemesPlaceWeb.Services.Base
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
                     request_.Method = new System.Net.Http.HttpMethod("DELETE");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -666,7 +676,12 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -690,7 +705,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<MemeDTO> AuthAsync(int id)
+        public virtual System.Threading.Tasks.Task<MemeDTOResponse> AuthAsync(int id)
         {
             return AuthAsync(id, System.Threading.CancellationToken.None);
         }
@@ -698,7 +713,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<MemeDTO> AuthAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<MemeDTOResponse> AuthAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -739,7 +754,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<MemeDTO>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<MemeDTOResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -768,7 +783,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task LikeAsync(int id)
+        public virtual System.Threading.Tasks.Task<BooleanResponse> LikeAsync(int id)
         {
             return LikeAsync(id, System.Threading.CancellationToken.None);
         }
@@ -776,7 +791,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task LikeAsync(int id, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<BooleanResponse> LikeAsync(int id, System.Threading.CancellationToken cancellationToken)
         {
             if (id == null)
                 throw new System.ArgumentNullException("id");
@@ -791,8 +806,9 @@ namespace MemesPlaceWeb.Services.Base
             {
                 using (var request_ = new System.Net.Http.HttpRequestMessage())
                 {
-                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "application/json");
+                    request_.Content = new System.Net.Http.StringContent(string.Empty, System.Text.Encoding.UTF8, "text/plain");
                     request_.Method = new System.Net.Http.HttpMethod("POST");
+                    request_.Headers.Accept.Add(System.Net.Http.Headers.MediaTypeWithQualityHeaderValue.Parse("text/plain"));
 
                     PrepareRequest(client_, request_, urlBuilder_);
 
@@ -817,7 +833,12 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            return;
+                            var objectResponse_ = await ReadObjectResponseAsync<BooleanResponse>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            if (objectResponse_.Object == null)
+                            {
+                                throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
+                            }
+                            return objectResponse_.Object;
                         }
                         else
                         {
@@ -841,7 +862,7 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body)
         {
             return UploadAsync(body, System.Threading.CancellationToken.None);
         }
@@ -849,7 +870,7 @@ namespace MemesPlaceWeb.Services.Base
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTO>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> UploadAsync(System.Collections.Generic.IEnumerable<MemeAddDTO> body, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes/upload");
@@ -889,7 +910,7 @@ namespace MemesPlaceWeb.Services.Base
                         var status_ = (int)response_.StatusCode;
                         if (status_ == 200)
                         {
-                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTO>>(response_, headers_, cancellationToken).ConfigureAwait(false);
+                            var objectResponse_ = await ReadObjectResponseAsync<System.Collections.Generic.ICollection<MemeDTOResponse>>(response_, headers_, cancellationToken).ConfigureAwait(false);
                             if (objectResponse_.Object == null)
                             {
                                 throw new ApiException("Response was null which was not expected.", status_, objectResponse_.Text, headers_, null);
@@ -1036,6 +1057,9 @@ namespace MemesPlaceWeb.Services.Base
 
     }
 
+    
+ 
+
     [System.CodeDom.Compiler.GeneratedCode("NJsonSchema", "13.16.1.0 (NJsonSchema v10.7.2.0 (Newtonsoft.Json v13.0.0.0))")]
     public partial class ExternalAuthDto
     {
@@ -1065,11 +1089,11 @@ namespace MemesPlaceWeb.Services.Base
     public partial class LoginUserDTO
     {
         [Newtonsoft.Json.JsonProperty("userName", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string UserName { get; set; }
 
         [Newtonsoft.Json.JsonProperty("password", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Password { get; set; }
 
     }
@@ -1078,7 +1102,7 @@ namespace MemesPlaceWeb.Services.Base
     public partial class MemeAddDTO
     {
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1128,6 +1152,9 @@ namespace MemesPlaceWeb.Services.Base
         [Newtonsoft.Json.JsonProperty("isVideo", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public bool IsVideo { get; set; }
 
+        [Newtonsoft.Json.JsonProperty("format", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
+        public string Format { get; set; }
+
         [Newtonsoft.Json.JsonProperty("tags", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public System.Collections.Generic.ICollection<string> Tags { get; set; }
 
@@ -1153,7 +1180,7 @@ namespace MemesPlaceWeb.Services.Base
         public string Password { get; set; }
 
         [Newtonsoft.Json.JsonProperty("email", Required = Newtonsoft.Json.Required.Always)]
-        [System.ComponentModel.DataAnnotations.Required(AllowEmptyStrings = true)]
+        [System.ComponentModel.DataAnnotations.Required]
         public string Email { get; set; }
 
     }

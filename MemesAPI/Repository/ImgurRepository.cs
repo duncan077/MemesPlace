@@ -1,7 +1,9 @@
 ﻿using Imgur;
 using Imgur.API.Authentication;
 using Imgur.API.Endpoints;
+using MemesAPI.Extension;
 using MemesAPI.Models.Meme;
+using MemesAPI.Repository.Interface;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Collections;
@@ -23,23 +25,37 @@ namespace MemesAPI.Repository
         {
             imageEndpoint = new ImageEndpoint(apiClient, httpClient);
         }
-        public async Task<string> UploadFile(ImageFile file)
-        { 
-          
-           
+        public async Task<Response<string>> UploadFile(ImageFile file)
+        {
 
 
+
+            try
+            {
                 if (img.Contains(file.format))
                 {
                     var imageUpload = await imageEndpoint.UploadImageAsync(new MemoryStream(file.data));
-                return (imageUpload.Link);
+                    return (new Response<string>() {
+                    Data=imageUpload.Link,Message="Success",IsSuccess=true} );
                 }
                 if (vid.Contains(file.format))
-            {
+                {
                     var imageUpload = await imageEndpoint.UploadVideoAsync(new MemoryStream(file.data));
-                return (imageUpload.Link);
+                    return (new Response<string>()
+                    {
+                        Data = imageUpload.Link,
+                        Message = "Success",
+                        IsSuccess = true
+                    });
                 }
-            return "";
+                return (new Response<string>() { Message = "Error Uploading" });
+            }
+            catch (Exception ex)
+            {
+
+                return (new Response<string>() { Message = "Error Uploading", Error = ex.Message });
+            }
+               
               
 
             

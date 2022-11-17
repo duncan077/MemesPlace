@@ -10,6 +10,7 @@
         public DateTime Date { get; set; }
         public string URLIMG { get; set; } = "";
         public bool IsVideo { get; set; }
+        public string Format { get; set; } = "";
         public List<string> Tags { get; set; } = new List<string>();
         public int likeCount { get; set; } =0;
         public bool like { get; set; } = false;

@@ -11,8 +11,9 @@ using MemesAPI.Extension;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using MemesAPI.Models.Meme;
-using MemesAPI.Repository;
 using Microsoft.CodeAnalysis;
+using MemesAPI.Repository.Interface;
+using System.Net;
 
 namespace MemesAPI.Controllers
 {
@@ -38,30 +39,91 @@ namespace MemesAPI.Controllers
 
         // GET: api/Memes
         [HttpGet]
-        [Authorize]
+        
         [AllowAnonymous]
                 
-        public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemes([FromQuery] MemeParameters memeParameters)
+        public async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemes([FromQuery] MemeParameters memeParameters)
         {
             return await GetMemesMethod(memeParameters);
         }
         [HttpGet("auth")]
         [Authorize]
-        public async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesAuth([FromQuery] MemeParameters memeParameters)
+        public async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemesAuth([FromQuery] MemeParameters memeParameters)
         {
             return await GetMemesMethod(memeParameters);
         }
 
-        private async Task<ActionResult<IEnumerable<MemeDTO>>> GetMemesMethod(MemeParameters memeParameters)
+        private async Task<ActionResult<IEnumerable<Response<MemeDTO>>>> GetMemesMethod(MemeParameters memeParameters)
         {
-            if (_context.Memes == null)
+            List<Response<MemeDTO>> response = new List<Response<MemeDTO>>();
+            try
             {
-                return NotFound();
+                if (_context.Memes == null)
+                {
+                    return NotFound(response);
+                }
+                var memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                
+                foreach (var meme in memes)
+                {
+                    var dto = _mapper.Map<MemeDTO>(meme);
+                    if (meme.Tags.Count > 0)
+                    {
+                        foreach (var item in meme.Tags)
+                        {
+                            dto.Tags.Add(item.Name);
+                        }
+                    }
+
+                    dto.likeCount = meme.Likes.Count();
+                    if (User.Identity.IsAuthenticated)
+                        dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+
+                    var responseDTO = new Response<MemeDTO>() { IsSuccess = true, Data = dto, Message = "Found" };
+                    response.Add(responseDTO);
+                }
+
+
+                return Ok(response);
             }
-            var memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
-            List<MemeDTO> result = new List<MemeDTO>();
-            foreach (var meme in memes)
+            catch (Exception ex)
             {
+
+                response.Add(new Response<MemeDTO>() { Error = ex.Message, Message = "Error getting memes" });
+                return response;
+            }
+            
+        }
+
+        // GET: api/Memes/5
+        [HttpGet("{id}")]
+        [AllowAnonymous]
+        public async Task<ActionResult<Response<MemeDTO>>> GetMeme(int id)
+        {
+            return await GetMemeMethod(id);
+        }
+        [HttpGet("auth/{id}")]
+        [Authorize]
+        public async Task<ActionResult<Response<MemeDTO>>> GetMemeAuth(int id)
+        {
+            return await GetMemeMethod(id);
+        }
+
+        private async Task<ActionResult<Response<MemeDTO>>> GetMemeMethod(int id)
+        {
+            var response = new Response<MemeDTO>();
+            try
+            {
+                if (_context.Memes == null)
+                {
+                    return NotFound(response);
+                }
+                var meme = await _context.Memes.FindAsync(id);
+
+                if (meme == null)
+                {
+                    return NotFound(response);
+                }
                 var dto = _mapper.Map<MemeDTO>(meme);
                 if (meme.Tags.Count > 0)
                 {
@@ -70,99 +132,76 @@ namespace MemesAPI.Controllers
                         dto.Tags.Add(item.Name);
                     }
                 }
-
+                dto.imgProfile = _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
                 dto.likeCount = meme.Likes.Count();
                 if (User.Identity.IsAuthenticated)
                     dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                response.IsSuccess = true;
+                response.Data= dto;
+                return response;
 
-
-                result.Add(dto);
             }
-
-
-            return Ok(result);
-        }
-
-        // GET: api/Memes/5
-        [HttpGet("{id}")]
-        [AllowAnonymous]
-        public async Task<ActionResult<MemeDTO>> GetMeme(int id)
-        {
-            return await GetMemeMethod(id);
-        }
-        [HttpGet("auth/{id}")]
-        [Authorize]
-        public async Task<ActionResult<MemeDTO>> GetMemeAuth(int id)
-        {
-            return await GetMemeMethod(id);
-        }
-
-        private async Task<ActionResult<MemeDTO>> GetMemeMethod(int id)
-        {
-            if (_context.Memes == null)
+            catch (Exception ex)
             {
-                return NotFound();
-            }
-            var meme = await _context.Memes.FindAsync(id);
+                response.Error=ex.Message;
+                response.Message = "Error retriving meme";
+                return response;
 
-            if (meme == null)
-            {
-                return NotFound();
             }
-            var dto = _mapper.Map<MemeDTO>(meme);
-            if (meme.Tags.Count > 0)
-            {
-                foreach (var item in meme.Tags)
-                {
-                    dto.Tags.Add(item.Name);
-                }
-            }
-            dto.imgProfile = _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
-            dto.likeCount = meme.Likes.Count();
-            if (User.Identity.IsAuthenticated)
-                dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
-
-            return dto;
+           
+            
         }
 
         [HttpPost("like/{id}")]
         [Authorize]
-        public async Task<ActionResult> LikeMeme(int id)
+        public async Task<ActionResult<Response<bool>>> LikeMeme(int id)
         {
-            
-            if (_context.Memes == null)
+            try
             {
-                return NotFound();
-            }
-            var meme = await _context.Memes.Include(m=>m.Likes).FirstAsync(m=>m.Id==id);
-            MemeUser user = (MemeUser)_context.Users.Where(x=>x.UserName.Equals(User.Identity.Name)).First();
-            
-            if (meme == null)
-            {
-                return NotFound();
-            }
-            var like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
-            if (like)
-            {
+                if (_context.Memes == null)
+                {
+                    return NotFound();
+                }
+                Response<bool> response = new Response<bool> { Data = false };
+                var meme = await _context.Memes.Include(m => m.Likes).FirstAsync(m => m.Id == id);
+                MemeUser user = (MemeUser)_context.Users.Where(x => x.UserName.Equals(User.Identity.Name)).First();
 
-                _context.MemeLike.Remove(_context.MemeLike.First(m => m.UserName == User.Identity.Name));
-                _context.SaveChanges();
-            }
-            else
-            {
-                 var liked = new MemeLike();
-                liked.UserName = User.Identity.Name;
-                liked.MemeId = id;
-                liked.DateTime = DateTime.UtcNow;
-                 _context.MemeLike.Add(liked);
+                if (meme == null)
+                {
+                    return NotFound(response);
+                }
+                var like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                if (like)
+                {
+
+                    _context.MemeLike.Remove(_context.MemeLike.First(m => m.UserName == User.Identity.Name));
+                    _context.SaveChanges();
+                    response.Data = false;
+                }
+                else
+                {
+                    var liked = new MemeLike();
+                    liked.UserName = User.Identity.Name;
+                    liked.MemeId = id;
+                    liked.DateTime = DateTime.UtcNow;
+                    _context.MemeLike.Add(liked);
+
+                    _context.SaveChanges();
+                    response.Data = true;
+                }
                 
-                _context.SaveChanges();
+                response.IsSuccess = true;
+                response.Message = "Like/Unlike successfully";
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                var response = new Response<bool> { Data = false, Message = "Error on like post", Error = ex.Message };
+                return BadRequest(response);
                 
             }
-
-
-
-            return Ok();
+            
         }
 
         // POST: api/Memes
@@ -171,7 +210,7 @@ namespace MemesAPI.Controllers
         [HttpPost("upload")]
         [RequestSizeLimit(200 * 1024 * 1024)]
         [RequestFormLimits(MultipartBodyLengthLimit = 200 * 1024 * 1024)]
-        public async Task<ActionResult<List<MemeDTO>>> PostMeme(List<MemeAddDTO> memeDTO)
+        public async Task<ActionResult<List<Response<MemeDTO>>>> PostMeme(List<MemeAddDTO> memeDTO)
         {
            
           if (_context.Memes == null)
@@ -180,36 +219,50 @@ namespace MemesAPI.Controllers
           }
             try
             {
-                var memedto = new List<MemeDTO>();
+                var memeResponse = new List<Response<MemeDTO>>();
                 foreach (var item in memeDTO)
                 {
+                    Response<string> upload= new Response<string>();
                     var meme = _mapper.Map<Meme>(item);
                     meme.UserName = User.Identity.Name;
                     meme.Date = DateTime.UtcNow;
-                    if(item.IsFile)
+                    if (item.IsFile)
                     {
-                      meme.URLIMG= await  fileRepository.UploadFile(item.Imgfile);
+                         upload = await fileRepository.UploadFile(item.Imgfile);
+                        if (upload.IsSuccess)
+                        {
+                            meme.URLIMG = upload.Data;
+                                  meme.Format = item.Imgfile.format;
+                        }
                     }
                     else
                     {
                         meme.URLIMG = item.URLIMG;
                     }
-                    if(meme.URLIMG=="")
-                        return BadRequest();
-                    await GetTags(item.Tags, meme);
-                    _context.Memes.Add(meme);
-                    await _context.SaveChangesAsync();
+                    if (meme.URLIMG == "" || !upload.IsSuccess)
+                    {
+                        memeResponse.Add(new Response<MemeDTO> { IsSuccess = false, Error = upload.Error, Message = upload.Message, Data = new MemeDTO() });
+                    }
+                    else
+                    {
+                        await GetTags(item.Tags, meme);
+                        _context.Memes.Add(meme);
+                        memeResponse.Add(new Response<MemeDTO>() { Data= _mapper.Map<MemeDTO>(meme) , IsSuccess=true, Message="Upload Successful"});
+                    }
 
-                    memedto = _mapper.Map<List<MemeDTO>>(meme);
+                    
 
                 }
-                
-                return Ok(memedto);
+                await _context.SaveChangesAsync();
+                return Ok(memeResponse);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-
-                return BadRequest();
+                var memeResponse = new List<Response<MemeDTO>>
+                {
+                    new Response<MemeDTO>() { Error = ex.Message }
+                };
+                return BadRequest(memeResponse);
             }
             
            
@@ -218,25 +271,26 @@ namespace MemesAPI.Controllers
         // DELETE: api/Memes/5
         [Authorize]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMeme(int id)
+        public async Task<ActionResult<Response<bool>>> DeleteMeme(int id)
         {
+            Response<bool> response = new Response<bool>() { Data = false };
             if (_context.Memes == null)
             {
-                return NotFound();
+                return NotFound(response);
             }
             var meme = await _context.Memes.FindAsync(id);
             if (meme == null)
             {
-                return NotFound();
+                return NotFound(response);
             }
             if (meme.UserName != User.Identity.Name)
             { 
-            return Unauthorized();
+            return Unauthorized(response);
             }
             _context.Memes.Remove(meme);
             await _context.SaveChangesAsync();
-
-            return NoContent();
+            response =new Response<bool>(){ Data = true,IsSuccess=true,Message=$"Meme {id} Deleted" };
+            return Ok(response);
         }
         private async Task GetTags(List<string> tags , Meme meme)
         {

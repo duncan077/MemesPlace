@@ -16,9 +16,9 @@ namespace MemesPlaceWeb.Services.Meme
 
 
         }
-        public async Task<Response<List<MemeDTO>>> GetMemes()
+        public async Task<List<Response<MemeDTO>>> GetMemes()
         {
-            Response<List<MemeDTO>> response;
+            List<Response<MemeDTO>> response;
             try
             {
 
@@ -27,30 +27,27 @@ namespace MemesPlaceWeb.Services.Meme
                   if (auth.User.Identity.IsAuthenticated) {
                       await GetBearerToken();
                       var data = await client.AuthAllAsync(1, "", 10);
-                      response = new Response<List<MemeDTO>>
-                      {
-                          Result = data.ToList(),
-                          IsSuccess = true
-                      };
+                    response = data.ToList();
                   }
                   else
                   {
                       var data = await client.MemesAllAsync(1, "", 10);
-                      response = new Response<List<MemeDTO>>
-                      {
-                          Result = data.ToList(),
-                          IsSuccess = true
-                      };
+                    response = data.ToList();
+                      
                   }
-               
+                return response;
 
             }
             catch (ApiException ex)
             {
-
-                response = ConvertApiExceptions<List<MemeDTO>>(ex);
+                var error= new List<Response<MemeDTO>>()
+                {
+                new Response<MemeDTO>{ Error = ex.Message }
+                };
+              
+                return error;
             }
-            return response;
+           
         }
         public async Task<Response<MemeDTO>> GetMeme(int id)
         {
@@ -62,28 +59,22 @@ namespace MemesPlaceWeb.Services.Meme
                 {
                     await GetBearerToken();
                     var data = await client.AuthAsync(id);
-                    response = new Response<MemeDTO>
-                    {
-                        Result = data,
-                        IsSuccess = true
-                    };
+                    response= data;
                 }
                 else
                 {
                     var data = await client.MemesGETAsync(id);
-                    response = new Response<MemeDTO>
-                    {
-                        Result = data,
-                        IsSuccess = true
-                    };
+                    response = data;
                 }
+                return response;
             }
             catch (ApiException ex)
             {
 
                 response = ConvertApiExceptions<MemeDTO>(ex);
+                return response;
             }
-            return response;
+           
         }
         public async Task<List<Response<MemeDTO>>> AddMeme(List<MemeAddDTO> memeAddDTO)
         {
@@ -93,10 +84,10 @@ namespace MemesPlaceWeb.Services.Meme
                 await GetBearerToken();
                 var data = await client.UploadAsync(memeAddDTO);
 
-                foreach (var item in data)
-                {
-                    response.Add(new Response<MemeDTO> { IsSuccess = true, Result = item });
-                }
+               
+                
+                    response=data.ToList();
+                
 
             }
             catch (ApiException ex)
@@ -112,8 +103,8 @@ namespace MemesPlaceWeb.Services.Meme
             try
             {
                 await GetBearerToken();
-                await client.LikeAsync(meme);
-                response.IsSuccess = true;
+               
+                response = await client.LikeAsync(meme);
              }
             catch (ApiException ex)
             {

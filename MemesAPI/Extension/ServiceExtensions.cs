@@ -1,4 +1,4 @@
-﻿using AspNetCoreRateLimit;
+﻿
 
 namespace MemesAPI.Extension
 {
@@ -6,7 +6,7 @@ namespace MemesAPI.Extension
     {
        
 
-        public static void ConfigureRateLimitingOptions(this IServiceCollection services)
+       /* public static void ConfigureRateLimitingOptions(this IServiceCollection services)
         {
             var rateLimitRules = new List<RateLimitRule> {
                  new RateLimitRule {
@@ -21,7 +21,7 @@ namespace MemesAPI.Extension
             });
        
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
-        }
+        }*/
         public static void ConfigureCors(this IServiceCollection services) =>
  services.AddCors(options =>
  {

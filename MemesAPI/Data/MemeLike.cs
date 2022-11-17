@@ -15,7 +15,9 @@ namespace MemesAPI.Data
         [ForeignKey(nameof(MemeUser.UserName))]
         public string UserName { get; set; }
         public DateTime DateTime { get; set; }
-        [ForeignKey(nameof(Meme))]
+        [ForeignKey("MemeD")]
         public int MemeId { get; set; }
+
+        public virtual Meme MemeD { get; set; }
     }
 }
