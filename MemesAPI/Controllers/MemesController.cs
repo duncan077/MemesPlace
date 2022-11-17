@@ -84,13 +84,12 @@ namespace MemesAPI.Controllers
                 }
 
 
-                return Ok(result);
+                return Ok(response);
             }
             catch (Exception ex)
             {
 
-                response.Error = ex.Message;
-                response.Message = "Error retriving memes";
+                response.Add(new Response<MemeDTO>() { Error = ex.Message, Message = "Error getting memes" });
                 return response;
             }
             
