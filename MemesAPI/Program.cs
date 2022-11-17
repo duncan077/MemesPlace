@@ -16,11 +16,11 @@ using MemesAPI.Repository.Interface;
 
 var builder = WebApplication.CreateBuilder(args);
 
-var connectionString = "Data Source=DESKTOP-3ALPJN4;Initial Catalog=MemesPlace;Integrated Security=True;Pooling=False;Encrypt=False";
+
 
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
-                .UseSqlServer(connectionString)
+                .UseSqlServer(builder.Configuration["ConnectionString"])
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)
@@ -67,7 +67,11 @@ builder.Services.AddAuthentication(options =>
 });
 builder.Services.AddAuthorization();
 
-builder.Services.ConfigureCors();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    builder.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -78,8 +82,9 @@ if (app.Environment.IsDevelopment())
 }
 
 //app.UseIpRateLimiting();
-app.UseCors("CorsPolicy");
 app.UseHttpsRedirection();
+app.UseCors();
+
 app.UseAuthentication();
 app.UseAuthorization();
 

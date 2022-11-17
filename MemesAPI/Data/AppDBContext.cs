@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using MemesAPI.Data.Seeds;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace MemesAPI.Data
@@ -12,7 +13,12 @@ namespace MemesAPI.Data
         protected AppDBContext()
         {
         }
-       public virtual DbSet<Meme> Memes { get; set; }
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            DataSeedExtension.DataSeedEx(builder);
+            base.OnModelCreating(builder);
+        }
+        public virtual DbSet<Meme> Memes { get; set; }
        public virtual DbSet<MemeLike> MemeLike { get; set; }
        public virtual DbSet<MemeUser> MemeUser { get; set; }
         public virtual DbSet<TagMeme> TagMeme { get; set; }

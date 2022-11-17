@@ -40,6 +40,7 @@ namespace MemesAPI.Controllers
                 var user = new MemeUser();
                 user.UserName = userDTO.UserName;
                 user.Email=userDTO.Email;
+                
                 var result = await _userManager.CreateAsync(user, userDTO.Password);
                 if (!result.Succeeded)
                 {
@@ -49,7 +50,7 @@ namespace MemesAPI.Controllers
                     }
                     return BadRequest(ModelState);
                 }
-               // await _userManager.AddToRoleAsync(user, "Viewer");
+                await _userManager.AddToRoleAsync(user, "User");
                 return Ok(result); }
             catch(Exception e)
             {

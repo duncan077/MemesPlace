@@ -14,6 +14,7 @@ using MemesAPI.Models.Meme;
 using Microsoft.CodeAnalysis;
 using MemesAPI.Repository.Interface;
 using System.Net;
+using System.Security.Claims;
 
 namespace MemesAPI.Controllers
 {
@@ -225,6 +226,7 @@ namespace MemesAPI.Controllers
                     Response<string> upload= new Response<string>();
                     var meme = _mapper.Map<Meme>(item);
                     meme.UserName = User.Identity.Name;
+                    meme.UserId = User.Claims.First(c => c.Type == "uid").Value;
                     meme.Date = DateTime.UtcNow;
                     if (item.IsFile)
                     {

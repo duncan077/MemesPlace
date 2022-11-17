@@ -21,31 +21,36 @@ namespace MemesPlaceWeb.Providers
         public override async Task<AuthenticationState> GetAuthenticationStateAsync()
         {
            
-            List<Claim> claims = await GetClaims();
             
-            return new AuthenticationState(new ClaimsPrincipal(new ClaimsIdentity( claims,"jwt")));
+            
+            return new AuthenticationState(new ClaimsPrincipal(await GetClaims()));
         }
         public async Task Loggedin()
         {
-            List<Claim> claims = await GetClaims();
-            var user = new ClaimsPrincipal(new ClaimsIdentity(claims, "jwt"));
+           
+            var user = new ClaimsPrincipal(await GetClaims());
             var authState = Task.FromResult(new AuthenticationState(user));
             NotifyAuthenticationStateChanged(authState);
         }
 
-        private async Task<List<Claim>> GetClaims()
+        private async Task<ClaimsIdentity> GetClaims()
         {
             var savedToken = await localStorage.GetItemAsync<string>("accessToken");
             if (savedToken == null)
-                return new List<Claim>();
+                return new ClaimsIdentity();
             var tokenConten = jwtSecurityTokenHandler.ReadJwtToken(savedToken);
           
-          if(tokenConten.ValidTo> DateTime.UtcNow)
-                return new List<Claim>();
-
-            var claims = tokenConten.Claims.ToList();
-           claims.Add(new Claim(ClaimTypes.Name, tokenConten.Subject));
-            return claims;
+          if(tokenConten.ValidTo<= DateTime.UtcNow)
+                return new ClaimsIdentity();
+            
+            var claims = new List<Claim>();
+            claims= tokenConten.Claims.ToList();
+            
+            
+          
+            var claimsIdentity = new ClaimsIdentity(claims, "JWT");
+          
+            return claimsIdentity;
         }
 
         public async Task LoggedOut()

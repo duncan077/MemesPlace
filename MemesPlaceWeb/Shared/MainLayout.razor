@@ -8,7 +8,37 @@
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
         <MudSpacer />
-        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" Edge="Edge.End" />
+            <AuthorizeView>
+                <Authorized>
+                    <MudMenu  Color="Color.Inherit">
+                        <ActivatorContent>
+                            <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@context.User.Identity.Name</MudChip>
+                        </ActivatorContent>
+                        <ChildContent>
+                        <MudMenuItem>Profile</MudMenuItem>
+                        <MudMenuItem>Settings</MudMenuItem>
+                        <MudMenuItem><MudNavLink Href="/users/logout" Match="NavLinkMatch.Prefix">Logout</MudNavLink></MudMenuItem>
+                        </ChildContent>
+                    </MudMenu>
+                </Authorized>
+                <NotAuthorized>
+                    <MudSpacer />
+                    <MudGrid Class="align-content-end">
+                         <MudSpacer />
+                         <MudItem xs="2">
+
+                    <MudNavLink Href="/users/login" Match="NavLinkMatch.Prefix" object-right>Login</MudNavLink>
+                    </MudItem>
+
+                    <MudItem xs="2">
+
+                    <MudNavLink Href="/users/register" Match="NavLinkMatch.Prefix" object-right>Register</MudNavLink>
+                    </MudItem>
+
+                     </MudGrid>
+                </NotAuthorized>
+            </AuthorizeView>
+        
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
         <MudDrawerHeader>
@@ -18,8 +48,6 @@
             <MudNavLink Href="/" Match="NavLinkMatch.All">Home</MudNavLink>
             <AuthorizeView>
             <Authorized>         
-                            <span class="oi oi-person" aria-hidden="true"></span> @context.User.Identity.Name
-                    <MudNavLink Href="/users/logout" Match="NavLinkMatch.Prefix">Logout</MudNavLink>
                     <MudNavLink Href="/upload" Match="NavLinkMatch.Prefix">Upload</MudNavLink>
 
             </Authorized>
@@ -34,8 +62,11 @@
         </MudNavMenu>
         
     </MudDrawer>
-    <MudMainContent>
-        @Body
+        <MudMainContent >
+            <MudContainer MaxWidth="MaxWidth.Large" Class="my-16 pt-16 align-content-center">
+                @Body
+            </MudContainer>
+        
     </MudMainContent>
     </MudLayout>
 </CascadingAuthenticationState>
