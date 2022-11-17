@@ -11,9 +11,12 @@ using MemesAPI.BgService;
 using MemesAPI.Repository;
 
 using MemesAPI.Repository.Interface;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
+var googleId=Environment.GetEnvironmentVariable("GoogleClientId");
+var googleSecret = Environment.GetEnvironmentVariable("GoogleClientSecret");
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
                 .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
@@ -54,6 +57,12 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
     };
+}).AddGoogle("google", opt =>
+{
+    
+    opt.ClientId = googleId;
+    opt.ClientSecret = googleSecret;
+    opt.SignInScheme = IdentityConstants.ExternalScheme;
 });
 builder.Services.AddAuthorization();
 
