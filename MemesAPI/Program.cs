@@ -54,12 +54,6 @@ builder.Services.AddAuthentication(options =>
         ValidAudience = builder.Configuration["JwtSettings:Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"]))
     };
-}).AddGoogle("google", opt =>
-{
-    var googleAuth = builder.Configuration.GetSection("Authentication:Google");
-    opt.ClientId = googleAuth["ClientId"];
-    opt.ClientSecret = googleAuth["ClientSecret"];
-    opt.SignInScheme = IdentityConstants.ExternalScheme;
 });
 builder.Services.AddAuthorization();
 
