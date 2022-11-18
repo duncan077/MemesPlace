@@ -1,5 +1,71 @@
-﻿<h3>MemeUnit</h3>
-
+﻿@page "/Meme/{id:int}"
+@inject IMemesService mS
+@inject IJSRuntime JS
+@inject DisqusState DisqusState
+@using MemesPlaceWeb.Component
+@using MemesPlaceWeb.Services.Disqus;
+<PageTitle>@pageTitle</PageTitle>
+<div class="col-12 col-lg-10 mx-auto">
+    <div class="row">
+        <div class="col" style="flex: 1 0 70%;">
+            <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
+                <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
+                   
+                            <div class="p-4">
+                            <MemeComponent meme=meme ></MemeComponent>
+                            </div>
+                            <div class="p-4">
+                        <div id="disqus_thread" style="@((!DisqusState.getDisplayDisqus()) ? "display: none;" : "")"></div>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    </div>    
+                </div>
+            </div>
+        </div>
+        
+    </div>
+</div>
 @code {
+    [Parameter]
+    public int id { get; set; }
+    public string pageTitle = "MemesPlace";
+    private string PAGE_URL = "https://memesplacedemo.azurewebsites.net/Meme/";
+    private string PAGE_IDENTIFIER="NotFound";
+    private ElementReference disqusBody;
+    MemeDTO meme = new MemeDTO();
+    protected override async Task OnInitializedAsync()
+    {
+        var res = await mS.GetMeme(id);
+        meme = res.IsSuccess ? res.Data : new MemeDTO { Name = "Not Found",Tags= new List<string>()};
+        pageTitle = $"MemesPlace - {meme.Name}";
+        PAGE_IDENTIFIER = id.ToString();
+        PAGE_URL = $"https://memesplacedemo.azurewebsites.net/Meme/{id}";
+       
+        StateHasChanged();
 
+    }
+    private async Task CreateDisqus()
+    {
+        
+        try
+        {
+            await DisqusInterop.CreateDisqus(
+                    JS,
+                    disqusBody,
+                    @$"https://memesfun.disqus.com/embed.js");
+            await DisqusInterop.ResetDisqus(
+                      JS,
+                      PAGE_IDENTIFIER,
+                      PAGE_URL,
+                      meme.Name);
+
+            DisqusState.SetDisplayDisqus(true);
+        }
+        catch { }
+        
+
+    }
+    void OnDisqusStateStateChanged(
+        object sender, EventArgs e) => StateHasChanged();
+
+   
 }

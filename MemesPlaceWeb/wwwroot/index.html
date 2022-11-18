@@ -25,6 +25,43 @@
     </div>
     <script src="_framework/blazor.webassembly.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        (function () {
+            window.gaFunctions = {
+                gaTracking: function (gaTrackingID) {
+                    (ga.q = ga.q || []).push(arguments);
+                    ga.l = +new Date;
+                    ga('create', gaTrackingID, 'auto');
+                    ga('send', 'pageview');
+                }
+            };
+            window.DisqusFunctions = {
+                createDisqus: function (disqusThreadElement, disqusSrc) {
+                    var dsq = document.createElement('script');
+                    dsq.type = 'text/javascript';
+                    dsq.async = true;
+                    dsq.src = disqusSrc;
+                    dsq.disqus_container_id = 'disqus_thread';
+                    disqusThreadElement.appendChild(dsq);
+                },
+                resetDisqus: function (newIdentifier, newUrl, newTitle) {
+                    try {
+                        DISQUS.reset({
+                            reload: true,
+                            config: function () {
+                                this.page.identifier = newIdentifier;
+                                this.page.url = newUrl;
+                                this.page.title = newTitle;
+                            }
+                        });
+                    }
+                    catch (err) {
+                        // do nothing
+                    }
+                }
+            };
+        })();
+    </script>
 </body>
 
 </html>

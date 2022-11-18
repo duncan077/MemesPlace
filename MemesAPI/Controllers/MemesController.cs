@@ -119,7 +119,7 @@ namespace MemesAPI.Controllers
                 {
                     return NotFound(response);
                 }
-                var meme = await _context.Memes.FindAsync(id);
+                var meme = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).FindAsync(id);
 
                 if (meme == null)
                 {
@@ -133,7 +133,7 @@ namespace MemesAPI.Controllers
                         dto.Tags.Add(item.Name);
                     }
                 }
-                dto.imgProfile = _userManager.FindByNameAsync(meme.UserName).Result.profilePic ?? "";
+                
                 dto.likeCount = meme.Likes.Count();
                 if (User.Identity.IsAuthenticated)
                     dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);

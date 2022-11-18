@@ -51,7 +51,8 @@ namespace MemesAPI.Data.Seeds
                UserId= "043377e4-9f2c-42d3-9d02-88ea5adcfae7"
 
             });
-
+            modelBuilder.Entity<Meme>().HasOne<MemeUser>(u => u.User)
+                .WithMany(m => m.Memes).OnDelete( DeleteBehavior.Restrict);
         }
     }
    
