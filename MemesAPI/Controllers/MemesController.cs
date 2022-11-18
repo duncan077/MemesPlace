@@ -119,7 +119,7 @@ namespace MemesAPI.Controllers
                 {
                     return NotFound(response);
                 }
-                var meme = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).FindAsync(id);
+                var meme = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).FirstAsync(m=>m.Id==id);
 
                 if (meme == null)
                 {
