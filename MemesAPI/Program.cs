@@ -14,7 +14,7 @@ using MemesAPI.Repository.Interface;
 using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
-var connectionString = "server=b7eq1ylon8jl9gx2yi3k-mysql.services.clever-cloud.com;Port=3306;user=ubeodcgjq8g5pogs;password=ixfwoisUNTkr2NTvcFVC;database=b7eq1ylon8jl9gx2yi3k";//Environment.GetEnvironmentVariable("ConnectionString");
+var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
 var googleId=Environment.GetEnvironmentVariable("GoogleClientId");
 var googleSecret = Environment.GetEnvironmentVariable("GoogleClientSecret");
 // Add services to the container.
