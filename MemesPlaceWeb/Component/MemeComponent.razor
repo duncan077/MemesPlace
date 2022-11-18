@@ -1,4 +1,5 @@
 ﻿@inject IMemesService memeService
+@inject NavigationManager nav
 @using System.Security.Claims
 <MudCard Elevation="1" >
     <MudCardHeader>
@@ -6,7 +7,10 @@
             <MudAvatar Color="Color.Secondary" Image="@meme.ImgProfile" >@meme.UserName</MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-            <MudText Typo="Typo.body1">@meme.Name</MudText>
+           
+                <MudButton OnClick="@BnClick">@meme.Name</MudButton>
+         
+            
             <MudText Typo="Typo.body2">@meme.Description</MudText>
         </CardHeaderContent>
         <CardHeaderActions>
@@ -26,11 +30,11 @@
         @if (meme.IsVideo)
         {
 
-            <video controls="" style="width:fit-content; max-height: 800px;"  name="media"><source src="@meme.Urlimg" type="@meme.Format"></video>
+            <video controls="" style="width:fit-content; max-height: 800px;"  name="media" ondblclick="@imgClick"><source src="@meme.Urlimg" type="@meme.Format"></video>
         }
         else
         {
-            <MudImage ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Height="600" Src="@meme.Urlimg" Style="max-height: 800px;"></MudImage>
+            <MudImage ondblclick="@imgClick" ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Height="600" Src="@meme.Urlimg" Style="max-height: 800px;"></MudImage>
         }</MudCardContent>
         <MudCardContent>
            
@@ -51,6 +55,8 @@
 @code {
     [Parameter]
     public MemeDTO meme { get; set; }
+    [Parameter]
+    public bool IsFull { get; set; } = false;
     [Inject] private IDialogService DialogService { get; set; }
     private async Task Like()
     {
@@ -62,9 +68,21 @@
               "Error Liking the meme"
               );
 
-           
+
         }
         meme.Like =response.Data;
         StateHasChanged();
+    }
+    private void BnClick()
+    {
+        if (!IsFull)
+            nav.NavigateTo($"/Meme/{meme.Id}");
+    }
+    private async void imgClick()
+    {
+        if (!IsFull)
+            nav.NavigateTo($"/Meme/{meme.Id}");
+        else
+            await Like();
     }
 }

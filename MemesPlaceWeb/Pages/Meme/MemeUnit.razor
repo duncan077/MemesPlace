@@ -12,10 +12,13 @@
                 <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
                    
                             <div class="p-4">
-                            <MemeComponent meme=meme ></MemeComponent>
+                            <MemeComponent meme=meme IsFull=true></MemeComponent>
                             </div>
                             <div class="p-4">
-                        <div id="disqus_thread" style="@((!DisqusState.getDisplayDisqus()) ? "display: none;" : "")"></div>
+                        <div @ref="@disqusBody" class="content px-4">
+       
+            <div id="disqus_thread" ></div>     
+    </div>
 <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
                     </div>    
                 </div>
@@ -39,7 +42,7 @@
         pageTitle = $"MemesPlace - {meme.Name}";
         PAGE_IDENTIFIER = id.ToString();
         PAGE_URL = $"https://memesplacedemo.azurewebsites.net/Meme/{id}";
-       
+        await CreateDisqus();
         StateHasChanged();
 
     }
@@ -62,10 +65,8 @@
         }
         catch { }
         
-
     }
-    void OnDisqusStateStateChanged(
-        object sender, EventArgs e) => StateHasChanged();
+
 
    
 }
