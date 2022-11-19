@@ -31,25 +31,15 @@
     private int currentPage = 1;
     List<MemeDTO> memes=new List<MemeDTO>(); 
     [Inject] private IDialogService DialogService { get; set; }
-    protected override async Task OnInitializedAsync()
-    {
-        // await GetMemesAsync();
-    }
+   
     public async Task<IEnumerable<Response<MemeDTO>>> GetMemesAsync(InfiniteScrollingItemsProviderRequest request)
     {
         try
         {
             var res = await mS.GetMemes(currentPage, "");
-            /*  foreach (var item in res)
-                  {
-                  if (item.IsSuccess)
-                      memes.Add(item.Data);
-              }*/
+           
             currentPage++;
-            bool? result = await DialogService.ShowMessageBox(
-              "Warning",
-              $"Current Page {currentPage}"
-              );
+           
             return res;
         }
         catch (Exception ex) 
