@@ -262,6 +262,7 @@ namespace MemesAPI.Controllers
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
+                Console.WriteLine(ex.Message);
                 var memeResponse = new List<Response<MemeDTO>>
                 {
                     new Response<MemeDTO>() { Error = ex.Message }
