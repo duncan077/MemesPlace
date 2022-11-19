@@ -14,7 +14,7 @@
 }
 
 <MudStack Justify="Justify.Center" Class="p-4">
-    <MudFileUpload  T="IReadOnlyList<IBrowserFile>" Accept=".jpg,.png,.jpeg,.mp4,.mkv,.avi,.gif,.webm" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
+    <MudFileUpload  T="IReadOnlyList<IBrowserFile>" Accept=".jpg,.png,.jpeg,.mp4,.mkv,.avi,.gif,.webm,.mov" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
                    @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
         <ButtonTemplate>
             <MudPaper Height="200" Outlined="true" Class="@DragClass">

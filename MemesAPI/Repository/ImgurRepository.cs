@@ -19,7 +19,7 @@ namespace MemesAPI.Repository
        private readonly HttpClient httpClient = new HttpClient();
         private readonly ApiClient apiClient = new ApiClient("5705e4a50de1ff4");
         private string[] img = { "image/png", "image/jpeg", "image/gif", "image/tiff", "image/webp" };
-        private string[] vid = { "video/x-msvideo", "video/mp4", "video/mpeg", "video/ogg", "video/mp2t", "video/webm", "video/3gpp" };
+        private string[] vid = { "video/x-msvideo", "video/mp4", "video/mpeg", "video/ogg", "video/mp2t", "video/webm", "video/3gpp", "video/quicktime" };
         ImageEndpoint imageEndpoint;
         public ImgurRepository()
         {
