@@ -223,7 +223,7 @@ namespace MemesAPI.Controllers
                 var memeResponse = new List<Response<MemeDTO>>();
                 foreach (var item in memeDTO)
                 {
-                    Response<string> upload= new Response<string>();
+                    Response<UploadResult> upload= new Response<UploadResult>();
                     var meme = _mapper.Map<Meme>(item);
                     meme.UserName = User.Identity.Name;
                     meme.UserId = User.Claims.First(c => c.Type == "uid").Value;
@@ -233,8 +233,9 @@ namespace MemesAPI.Controllers
                          upload = await fileRepository.UploadFile(item.Imgfile);
                         if (upload.IsSuccess)
                         {
-                            meme.URLIMG = upload.Data;
+                            meme.URLIMG = upload.Data.URL;
                                   meme.Format = item.Imgfile.format;
+                            meme.IsVideo= upload.Data.IsVideo;
                         }
                         _logger.LogInformation($"Upload Failed {upload.Error}, {upload.IsSuccess}, {upload.Data}");
                     }

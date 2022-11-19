@@ -83,7 +83,7 @@
                     {
                         Imgfile = new ImageFile { Data = buffers, Format = file.ContentType, Size = file.Size },
                         IsFile = true,
-                        IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") || file.ContentType.Contains("mov") ? true : false)
+                        IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") || file.ContentType.Contains("mov") || file.ContentType.Contains("quicktime") ? true : false)
                     });
             }
             StateHasChanged();
@@ -136,7 +136,7 @@
                 {
                 bool? result = await DialogService.ShowMessageBox(
           "Error",
-          $"Error on selecting file, {response.First().Error}"
+          $"Error on selecting file, {response.FirstOrDefault().Error}"
           );
                 }
                  

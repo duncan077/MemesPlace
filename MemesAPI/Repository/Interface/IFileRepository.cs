@@ -5,6 +5,6 @@ namespace MemesAPI.Repository.Interface
 {
     public interface IFileRepository
     {
-        public Task<Response<string>> UploadFile(ImageFile files);
+        public Task<Response<UploadResult>> UploadFile(ImageFile files);
     }
 }

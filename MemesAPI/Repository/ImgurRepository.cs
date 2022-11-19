@@ -25,7 +25,7 @@ namespace MemesAPI.Repository
         {
             imageEndpoint = new ImageEndpoint(apiClient, httpClient);
         }
-        public async Task<Response<string>> UploadFile(ImageFile file)
+        public async Task<Response<UploadResult>> UploadFile(ImageFile file)
         {
 
 
@@ -35,15 +35,17 @@ namespace MemesAPI.Repository
                 if (img.Contains(file.format))
                 {
                     var imageUpload = await imageEndpoint.UploadImageAsync(new MemoryStream(file.data));
-                    return (new Response<string>() {
-                    Data=imageUpload.Link,Message="Success",IsSuccess=true} );
+                    return (new Response<UploadResult>() {
+                    Data=new UploadResult() { URL=imageUpload.Link, Format=imageUpload.Type, IsVideo=false}
+                    ,Message="Success",IsSuccess=true} );
                 }
                 if (vid.Contains(file.format))
                 {
                     var imageUpload = await imageEndpoint.UploadVideoAsync(new MemoryStream(file.data));
-                    return (new Response<string>()
+                    
+                    return (new Response<UploadResult>()
                     {
-                        Data = imageUpload.Link,
+                        Data = new UploadResult() { URL = imageUpload.Link, Format = imageUpload.Type, IsVideo = true },
                         Message = "Success",
                         IsSuccess = true
                     });
