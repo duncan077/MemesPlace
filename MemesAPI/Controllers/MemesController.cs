@@ -255,11 +255,13 @@ namespace MemesAPI.Controllers
                     
 
                 }
+                _logger.LogInformation("Upload Success");
                 await _context.SaveChangesAsync();
                 return Ok(memeResponse);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 var memeResponse = new List<Response<MemeDTO>>
                 {
                     new Response<MemeDTO>() { Error = ex.Message }

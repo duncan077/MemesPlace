@@ -60,7 +60,7 @@
 
 @code {
         string message;
-    [Inject] private IDialogService DialogService { get; set; }
+  
         List<MemeAddDTO> memes = new List<MemeAddDTO>();
 
     private bool Clearing = false;
@@ -77,13 +77,13 @@
             foreach (var file in files)
             {
                 var buffers = new byte[file.Size];
-                await file.OpenReadStream(200000000).ReadAsync(buffers);
+                await file.OpenReadStream(209715200).ReadAsync(buffers);
 
                 memes.Add(new MemeAddDTO
                     {
                         Imgfile = new ImageFile { Data = buffers, Format = file.ContentType, Size = file.Size },
                         IsFile = true,
-                        IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") ? true : false)
+                        IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") || file.ContentType.Contains("mov") ? true : false)
                     });
             }
             StateHasChanged();
@@ -134,10 +134,12 @@
                 }
                 else
                 {
-                    message = response.FirstOrDefault().Message;
+                bool? result = await DialogService.ShowMessageBox(
+          "Error",
+          $"Error on selecting file, {response.First().Error}"
+          );
                 }
-                 Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-        Snackbar.Add("TODO: Upload your files!", Severity.Normal);
+                 
             }
             catch (ApiException ex)
             {
