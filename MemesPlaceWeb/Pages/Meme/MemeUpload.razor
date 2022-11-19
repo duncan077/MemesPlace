@@ -13,7 +13,7 @@
     <div class="alert-danger">@message</div>
 }
 
-<MudStack Style="width: 100%" >
+<MudStack Justify="Justify.Center" Class="p-4">
     <MudFileUpload  T="IReadOnlyList<IBrowserFile>" Accept=".jpg,.png,.jpeg,.mp4,.mkv,.avi,.gif,.webm" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
                    @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
         <ButtonTemplate>
@@ -23,32 +23,35 @@
             </MudPaper>
         </ButtonTemplate>
     </MudFileUpload>
-    @foreach (var file in memes)
-    {
-        <MudGrid>
-            <MudItem xs="12" sm="7">
-                <MudCard>
-                    <MudCardContent>
-                        <MudTextField Label="Title"
-                                  @bind-Value="file.Name" For="@(() => file.Name)" />
-                        <MudTextField Label="Description" Class="mt-3"
-                                  @bind-Value="file.Description" For="@(() => file.Description)" />
-                        @if (file.IsVideo)
+    
+                        @foreach (var file in memes)
                         {
-                            <video src="@FormImgtoUrl(file.Imgfile)"></video>
+        <MudItem Style="position: relative;align-self: center;">
+                            
+                               
+                                     <MudCard >
+                                        <MudCardContent Style="text-align:center; height:800;width:fit-content; max-height: 800px;">
+                                            <MudTextField Label="Title"
+                                                      @bind-Value="file.Name" For="@(() => file.Name)" />
+                                            <MudTextField Label="Description" Class="mt-3"
+                                                      @bind-Value="file.Description" For="@(() => file.Description)" />
+                                           @if(file.IsVideo)
+                    {
+                        <video src=" @FormImgtoUrl(file.Imgfile)" height="600px"/>
+                    }else
+                    {
+                         <img src="@FormImgtoUrl(file.Imgfile)" height="600px"/>
+                    }
+                   
+                                            
+
+                                        </MudCardContent>
+
+                                    </MudCard>
+                               </MudItem>
                         }
-                        else
-                        {
-                            <img src="@FormImgtoUrl(file.Imgfile)" height="600" width="400">
-                        }
 
-                    </MudCardContent>
-
-                </MudCard>
-            </MudItem>
-
-        </MudGrid>
-    }
+   
     <MudToolBar DisableGutters="true" Class="gap-4">
         <MudButton OnClick="MemePost" Disabled="@(!memes.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
         <MudButton OnClick="Clear" Disabled="@(!memes.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
@@ -56,14 +59,14 @@
 </MudStack>
 
 @code {
-    string message;
+        string message;
 
-    List<MemeAddDTO> memes = new List<MemeAddDTO>();
+        List<MemeAddDTO> memes = new List<MemeAddDTO>();
 
     private bool Clearing = false;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
-
+  
 
     private async void OnInputFileChanged(InputFileChangeEventArgs e)
     {
@@ -80,7 +83,7 @@
                     {
                         Imgfile = new ImageFile { Data = buffers, Format = file.ContentType, Size = file.Size },
                         IsFile = true,
-                        IsVideo = (file.ContentType.Contains("mp4"))
+                        IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") ? true : false)
                     });
             }
             StateHasChanged();

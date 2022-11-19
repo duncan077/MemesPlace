@@ -8,12 +8,17 @@
         <div class="col" style="flex: 1 0 70%;">
             <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
                 <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
-                    @foreach (var item in memes)
-                    {
-                        <div class="p-4">
-                        <MemeComponent meme=item ></MemeComponent>
-                        </div>
-                    }
+                    <InfiniteScrolling ItemsProvider="GetMemesAsync">
+                        <ItemTemplate Context="meme">
+                            <div class="p-4">
+                                <MemeComponent meme=meme.Data></MemeComponent>
+                            </div>
+                        </ItemTemplate>
+                        <LoadingTemplate>
+                            <div><span class="oi oi-reload spin"></span> Loading more items...</div>
+                        </LoadingTemplate>
+                    </InfiniteScrolling>
+                 
                 </div>
             </div>
         </div>
@@ -23,16 +28,38 @@
 
 @code {
     public string pageTitle = "MemesPlace";
-
+    private int currentPage = 1;
     List<MemeDTO> memes=new List<MemeDTO>(); 
+    [Inject] private IDialogService DialogService { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        var res =await mS.GetMemes();
-        foreach (var item in res)
+        // await GetMemesAsync();
+    }
+    public async Task<IEnumerable<Response<MemeDTO>>> GetMemesAsync(InfiniteScrollingItemsProviderRequest request)
+    {
+        try
         {
-            if (item.IsSuccess)
-                memes.Add(item.Data);
+            var res = await mS.GetMemes(currentPage, "");
+            /*  foreach (var item in res)
+                  {
+                  if (item.IsSuccess)
+                      memes.Add(item.Data);
+              }*/
+            currentPage++;
+            bool? result = await DialogService.ShowMessageBox(
+              "Warning",
+              $"Current Page {currentPage}"
+              );
+            return res;
         }
-        StateHasChanged();
+        catch (Exception ex) 
+        {
+            bool? result = await DialogService.ShowMessageBox(
+              "Warning",
+              $"Error retriving memes, {ex.Message}"
+              );
+            return null;
+        }
+        
     }
 }

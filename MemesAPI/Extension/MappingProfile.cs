@@ -17,6 +17,7 @@ namespace MemesAPI.Extension
             CreateMap<Meme, MemeAddDTO>().ReverseMap();
             CreateMap<Meme, MemeDTO>().ReverseMap();
             CreateMap<Meme, MemeEditDTO>().ReverseMap();
+            CreateMap<MemeUser, ProfileDTO>().ReverseMap();
 
 
         }

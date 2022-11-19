@@ -16,7 +16,7 @@ namespace MemesPlaceWeb.Services.Meme
 
 
         }
-        public async Task<List<Response<MemeDTO>>> GetMemes()
+        public async Task<List<Response<MemeDTO>>> GetMemes(int page, string tag)
         {
             List<Response<MemeDTO>> response;
             try
@@ -26,12 +26,12 @@ namespace MemesPlaceWeb.Services.Meme
                 var auth = await authenticationState.GetAuthenticationStateAsync();
                   if (auth.User.Identity.IsAuthenticated) {
                       await GetBearerToken();
-                      var data = await client.AuthAllAsync(1, "", 10);
+                      var data = await client.AuthAllAsync(page, tag, 10);
                     response = data.ToList();
                   }
                   else
                   {
-                      var data = await client.MemesAllAsync(1, "", 10);
+                      var data = await client.MemesAllAsync(page, tag, 10);
                     response = data.ToList();
                       
                   }
@@ -108,11 +108,62 @@ namespace MemesPlaceWeb.Services.Meme
              }
             catch (ApiException ex)
             {
+                response.Error = ex.Message;
                 response.IsSuccess = false;
 
             }
         return response;
         }
-    
+        public async Task<Response<ProfileDTO>> GetProfile(string user)
+        {
+            Response<ProfileDTO> response = new Response<ProfileDTO>();
+            try
+            {
+                
+
+                response = await client.UserAsync(user);
+            }
+            catch (ApiException ex)
+            {
+                response.Error = ex.Message;
+                response.IsSuccess = false;
+
+            }
+            return response;
+        }
+        public async Task<Response<bool>> ChangePassword(PasswordChange passwordChange)
+        {
+            Response<bool> response = new Response<bool>();
+            try
+            {
+                await GetBearerToken();
+
+                response = await client.ChangepasswordAsync(passwordChange);
+            }
+            catch (ApiException ex)
+            {
+                response.Error = ex.Message;
+                response.IsSuccess = false;
+
+            }
+            return response;
+        }
+        public async Task<Response<bool>> ChangeProfile(ProfileChange profile)
+        {
+            Response<bool> response = new Response<bool>();
+            try
+            {
+                await GetBearerToken();
+
+                response = await client.ChangeprofileAsync(profile);
+            }
+            catch (ApiException ex)
+            {
+                response.Error = ex.Message;
+                response.IsSuccess = false;
+
+            }
+            return response;
+        }
     }
 }

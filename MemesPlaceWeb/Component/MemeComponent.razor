@@ -36,8 +36,11 @@
         {
             <MudImage ondblclick="@imgClick" ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Height="600" Src="@meme.Urlimg" Style="max-height: 800px;"></MudImage>
         }</MudCardContent>
-        <MudCardContent>
-           
+        <MudCardContent Class="m-lg-1">
+           @foreach (var tag in meme.Tags)
+        {
+            <MudButton  >@tag</MudButton>
+        }
 
         </MudCardContent>
         

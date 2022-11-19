@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MemesAPI.Models.Meme;
+using System.ComponentModel.DataAnnotations;
 
 namespace MemesAPI.Models.User
 {
@@ -25,4 +26,5 @@ namespace MemesAPI.Models.User
         [Required]
         public string Password { get; set; }
     }
+    public record ProfileDTO(string UserName, int Karma, string profilePic,string signature,ICollection<MemeDTO> LastMemes);
 }
