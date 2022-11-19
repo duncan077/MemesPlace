@@ -236,6 +236,7 @@ namespace MemesAPI.Controllers
                             meme.URLIMG = upload.Data;
                                   meme.Format = item.Imgfile.format;
                         }
+                        _logger.LogInformation($"Upload Failed {upload.Error}, {upload.IsSuccess}, {upload.Data}");
                     }
                     else
                     {
@@ -243,10 +244,12 @@ namespace MemesAPI.Controllers
                     }
                     if (meme.URLIMG == "" || !upload.IsSuccess)
                     {
+                        _logger.LogInformation("Upload Failed");
                         memeResponse.Add(new Response<MemeDTO> { IsSuccess = false, Error = upload.Error, Message = upload.Message, Data = new MemeDTO() });
                     }
                     else
                     {
+                        _logger.LogInformation("Uploading");
                         await GetTags(item.Tags, meme);
                         _context.Memes.Add(meme);
                         memeResponse.Add(new Response<MemeDTO>() { Data= _mapper.Map<MemeDTO>(meme) , IsSuccess=true, Message="Upload Successful"});
@@ -255,8 +258,9 @@ namespace MemesAPI.Controllers
                     
 
                 }
-                _logger.LogInformation("Upload Success");
+                
                 await _context.SaveChangesAsync();
+                _logger.LogInformation("Upload Success");
                 return Ok(memeResponse);
             }
             catch (Exception ex)
