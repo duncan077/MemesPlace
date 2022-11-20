@@ -5,7 +5,7 @@
         const int maxPageSize = 50;
         public int PageNumber { get; set; } = 1;
         private int _pageSize = 10;
-        public string? name { get; set; }
+        
         public int PageSize
         {
             get
@@ -23,6 +23,8 @@
     }
     public class MemeParameters : RequestParameters
     {
-
+public string name { get; set; } = string.Empty;
+        public string tag { get; set; } = string.Empty;
+        public bool popular { get; set; } = false;
     }
 }

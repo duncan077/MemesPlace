@@ -44,7 +44,11 @@ namespace MemesAPI.Controllers
                     response.Error = "Not Found";
                     return response;
                 }
-                var lastMemes = _mapper.Map<List<MemeDTO>>(_context.Memes.Where(m => m.UserId == user.Id).OrderByDescending(m => m.Date).Take(5).ToListAsync());
+                var lastMemes = _mapper.Map<ICollection<MemeDTO>>(_context.Memes.Where(m => m.UserId == user.Id).OrderByDescending(m => m.Likes.Count).Take(5).ToImmutableHashSet());
+                if(lastMemes.Count==0)
+                {
+                    lastMemes=new HashSet<MemeDTO>();
+                }
                 var profile = new ProfileDTO(user.UserName, user.Karma, user.profilePic, user.signature, lastMemes);
                 response.Data = profile;
                 response.IsSuccess = true;
@@ -120,7 +124,7 @@ namespace MemesAPI.Controllers
                 if(profile.IsFile)
                 {
                     var imgUrl =await _fileRepository.UploadFile(profile.image);
-                    user.profilePic = imgUrl.IsSuccess ? imgUrl.Data : user.profilePic;
+                    user.profilePic = imgUrl.IsSuccess ? imgUrl.Data.URL : user.profilePic;
                 }
                 else
                 {

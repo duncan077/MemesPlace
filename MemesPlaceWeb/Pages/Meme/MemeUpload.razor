@@ -35,6 +35,8 @@
                                                       @bind-Value="file.Name" For="@(() => file.Name)" />
                                             <MudTextField Label="Description" Class="mt-3"
                                                       @bind-Value="file.Description" For="@(() => file.Description)" />
+                                                      <MudTextField Label="Tags" Class="mt-3"
+                                                      @bind-Value="file.Tags" For="@(() => file.Tags)" />
                                            @if(file.IsVideo)
                     {
                         <video src=" @FormImgtoUrl(file.Imgfile)" height="600px"/>

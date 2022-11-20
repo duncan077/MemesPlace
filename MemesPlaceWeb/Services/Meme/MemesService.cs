@@ -16,7 +16,7 @@ namespace MemesPlaceWeb.Services.Meme
 
 
         }
-        public async Task<List<Response<MemeDTO>>> GetMemes(int page, string tag)
+        public async Task<List<Response<MemeDTO>>> GetMemes(int page, string tag, bool trend,string name)
         {
             List<Response<MemeDTO>> response;
             try
@@ -26,12 +26,12 @@ namespace MemesPlaceWeb.Services.Meme
                 var auth = await authenticationState.GetAuthenticationStateAsync();
                   if (auth.User.Identity.IsAuthenticated) {
                       await GetBearerToken();
-                      var data = await client.AuthAllAsync(page, tag, 10);
+                      var data = await client.AuthAllAsync(name, tag, trend, page, 10);
                     response = data.ToList();
                   }
                   else
                   {
-                      var data = await client.MemesAllAsync(page, tag, 10);
+                      var data = await client.MemesAllAsync(name, tag, trend, page, 10);
                     response = data.ToList();
                       
                   }

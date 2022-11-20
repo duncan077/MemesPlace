@@ -50,12 +50,12 @@ namespace MemesAPI.Repository
                         IsSuccess = true
                     });
                 }
-                return (new Response<string>() { Message = "Error Uploading"});
+                return (new Response<UploadResult>() { Message = "Error Uploading"});
             }
             catch (Exception ex)
             {
 
-                return (new Response<string>() { Message = "Error Uploading", Error = ex.Message });
+                return (new Response<UploadResult>() { Message = "Error Uploading", Error = ex.Message });
             }
                
               

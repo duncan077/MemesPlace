@@ -59,11 +59,19 @@ namespace MemesAPI.Controllers
             List<Response<MemeDTO>> response = new List<Response<MemeDTO>>();
             try
             {
+                var memes = new List<Meme>();
                 if (_context.Memes == null)
                 {
                     return NotFound(response);
                 }
-                var memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                if (memeParameters.popular)
+                {
+                    memes = await GetMemesTrendQuery(memeParameters);
+                }
+                else
+                {
+                    memes = await GetMemesQuery(memeParameters);
+                }
                 
                 foreach (var meme in memes)
                 {
@@ -94,6 +102,69 @@ namespace MemesAPI.Controllers
                 return response;
             }
             
+        }
+
+        private async Task<List<Meme>> GetMemesQuery(MemeParameters memeParameters)
+        {
+            var memes = new List<Meme>();
+            if (memeParameters.name == "" && memeParameters.tag == "")
+            {
+                memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+            }
+            else
+            {
+                if (memeParameters.name != "")
+                {
+                    memes = await _context.Memes.Include(l => l.Likes)
+                       .Include(t => t.Tags)
+                       .Where(m => m.UserName == memeParameters.name)
+                       .OrderByDescending(m => m.Date)
+                       .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
+                       .Take(memeParameters.PageSize).ToListAsync();
+                }
+                else
+                {
+                    memes = await _context.Memes.Include(l => l.Likes)
+                       .Include(t => t.Tags)
+                       .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
+                       .OrderByDescending(m => m.Date)
+                       .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
+                       .Take(memeParameters.PageSize).ToListAsync();
+                }
+            }
+
+            return memes;
+        }
+        private async Task<List<Meme>> GetMemesTrendQuery(MemeParameters memeParameters)
+        {
+            var memes = new List<Meme>();
+            if (memeParameters.name == "" && memeParameters.tag == "")
+            {
+                memes = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+            }
+            else
+            {
+                if (memeParameters.name != "")
+                {
+                    memes = await _context.Memes.Include(l => l.Likes)
+                       .Include(t => t.Tags)
+                       .Where(m => m.UserName == memeParameters.name)
+                       .OrderByDescending(m => m.Date)
+                       .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
+                       .Take(memeParameters.PageSize).ToListAsync();
+                }
+                else
+                {
+                    memes = await _context.Memes.Include(l => l.Likes)
+                       .Include(t => t.Tags)
+                       .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
+                       .OrderByDescending(m => m.Date)
+                       .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
+                       .Take(memeParameters.PageSize).ToListAsync();
+                }
+            }
+
+            return memes;
         }
 
         // GET: api/Memes/5

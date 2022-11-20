@@ -7,8 +7,8 @@
             <MudAvatar Color="Color.Secondary" Image="@meme.ImgProfile" >@meme.UserName</MudAvatar>
         </CardHeaderAvatar>
         <CardHeaderContent>
-           
-                <MudButton OnClick="@BnClick">@meme.Name</MudButton>
+
+            <MudButton Style="width: -webkit-fill-available;" OnClick="@BnClick">@meme.Name</MudButton>
          
             
             <MudText Typo="Typo.body2">@meme.Description</MudText>
@@ -26,7 +26,7 @@
     </MudCardHeader>
  
     
-    <MudCardContent Style="text-align: center; ">
+    <MudCardContent onclick="@BnClick" Style="text-align: center; ">
         @if (meme.IsVideo)
         {
 
@@ -39,7 +39,7 @@
         <MudCardContent Class="m-lg-1">
            @foreach (var tag in meme.Tags)
         {
-            <MudButton  >@tag</MudButton>
+            <MudButton>@tag</MudButton>
         }
 
         </MudCardContent>

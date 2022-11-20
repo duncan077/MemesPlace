@@ -3,9 +3,10 @@
 //     Generated using the NSwag toolchain v13.16.1.0 (NJsonSchema v10.7.2.0 (Newtonsoft.Json v13.0.0.0)) (http://NSwag.org)
 // </auto-generated>
 //----------------------
-using ProfileDTOResponse= MemesPlaceWeb.Services.Base.Response<MemesPlaceWeb.Services.Base.ProfileDTO>;
+
 using BooleanResponse = MemesPlaceWeb.Services.Base.Response<bool>;
 using MemeDTOResponse = MemesPlaceWeb.Services.Base.Response<MemesPlaceWeb.Services.Base.MemeDTO>;
+using ProfileDTOResponse= MemesPlaceWeb.Services.Base.Response<MemesPlaceWeb.Services.Base.ProfileDTO>;
 
 #pragma warning disable 108 // Disable "CS0108 '{derivedDto}.ToJson()' hides inherited member '{dtoBase}.ToJson()'. Use the new keyword if hiding was intended."
 #pragma warning disable 114 // Disable "CS0114 '{derivedDto}.RaisePropertyChanged(String)' hides inherited member 'dtoBase.RaisePropertyChanged(String)'. To make the current member override that implementation, add the override keyword. Otherwise add the new keyword."
@@ -52,21 +53,21 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize);
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken);
+        System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken);
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
@@ -402,25 +403,33 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize)
         {
-            return MemesAllAsync(pageNumber, name, pageSize, System.Threading.CancellationToken.None);
+            return MemesAllAsync(name, tag, popular, pageNumber, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> MemesAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes?");
-            if (pageNumber != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("PageNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
             if (name != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("name") + "=").Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (tag != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("tag") + "=").Append(System.Uri.EscapeDataString(ConvertToString(tag, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (popular != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("popular") + "=").Append(System.Uri.EscapeDataString(ConvertToString(popular, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (pageNumber != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("PageNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (pageSize != null)
             {
@@ -489,25 +498,33 @@ namespace MemesPlaceWeb.Services.Base
 
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize)
+        public virtual System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize)
         {
-            return AuthAllAsync(pageNumber, name, pageSize, System.Threading.CancellationToken.None);
+            return AuthAllAsync(name, tag, popular, pageNumber, pageSize, System.Threading.CancellationToken.None);
         }
 
         /// <param name="cancellationToken">A cancellation token that can be used by other objects or threads to receive notice of cancellation.</param>
         /// <returns>Success</returns>
         /// <exception cref="ApiException">A server side error occurred.</exception>
-        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(int? pageNumber, string name, int? pageSize, System.Threading.CancellationToken cancellationToken)
+        public virtual async System.Threading.Tasks.Task<System.Collections.Generic.ICollection<MemeDTOResponse>> AuthAllAsync(string name, string tag, bool? popular, int? pageNumber, int? pageSize, System.Threading.CancellationToken cancellationToken)
         {
             var urlBuilder_ = new System.Text.StringBuilder();
             urlBuilder_.Append("api/Memes/auth?");
-            if (pageNumber != null)
-            {
-                urlBuilder_.Append(System.Uri.EscapeDataString("PageNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
-            }
             if (name != null)
             {
                 urlBuilder_.Append(System.Uri.EscapeDataString("name") + "=").Append(System.Uri.EscapeDataString(ConvertToString(name, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (tag != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("tag") + "=").Append(System.Uri.EscapeDataString(ConvertToString(tag, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (popular != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("popular") + "=").Append(System.Uri.EscapeDataString(ConvertToString(popular, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
+            }
+            if (pageNumber != null)
+            {
+                urlBuilder_.Append(System.Uri.EscapeDataString("PageNumber") + "=").Append(System.Uri.EscapeDataString(ConvertToString(pageNumber, System.Globalization.CultureInfo.InvariantCulture))).Append("&");
             }
             if (pageSize != null)
             {

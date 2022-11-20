@@ -7,10 +7,7 @@ namespace MemesAPI.Repository
 {
     public class AzureBlobService : IFileRepository
     {
-     
-
-     
-        Task<Response<string>> IFileRepository.UploadFile(ImageFile files)
+        public Task<Response<UploadResult>> UploadFile(ImageFile files)
         {
             throw new NotImplementedException();
         }

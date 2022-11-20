@@ -4,7 +4,7 @@ namespace MemesPlaceWeb.Services.Meme
 {
     public interface IMemesService
     {
-        Task<List<Response<MemeDTO>>> GetMemes(int page, string tag);
+        Task<List<Response<MemeDTO>>> GetMemes(int page, string tag, bool trend, string name);
         Task<Response<MemeDTO>> GetMeme(int id);
         Task<List<Response<MemeDTO>>> AddMeme(List<MemeAddDTO> memeAddDTO);
         Task<Response<bool>> Like(int meme);

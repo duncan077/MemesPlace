@@ -1,0 +1,56 @@
+﻿@page "/users/profile/{username}"
+@inject IMemesService _memeService
+<MudContainer>
+    <MudStack Class="col-4">
+        <MudAvatar Image="@profile.ProfilePic"></MudAvatar>
+        <MudText>@profile.UserName</MudText>
+    </MudStack>
+    <MudStack Class="col-8">
+        <MudText>The best memes of @profile.UserName</MudText>
+        @foreach (var item in profile.LastMemes)
+        {
+            <MemeComponent meme="item"></MemeComponent>
+            
+        }
+    </MudStack>
+</MudContainer>
+
+@code {
+    [Parameter]
+    public string username { get; set; }
+    private ProfileDTO profile= new ProfileDTO();
+   [Inject] private IDialogService DialogService { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        await GetProfile();
+        
+    }
+
+    private async Task GetProfile()
+    {
+        try
+        {
+             var result = await _memeService.GetProfile(username);
+        if (result.IsSuccess)
+        {
+            profile = result.Data;
+        }
+        else
+        {
+            
+
+        }
+        }
+        catch (Exception ex)
+        {
+            bool? result = await DialogService.ShowMessageBox(
+               "Warning",
+               $"Error retriving memes, {ex.Message}"
+               );
+            
+        }
+       
+    }
+
+   
+}
