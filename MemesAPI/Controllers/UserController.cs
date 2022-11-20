@@ -34,6 +34,19 @@ namespace MemesAPI.Controllers
         [HttpGet("{username}")]
         public async Task<ActionResult<Response<ProfileDTO>>> GetProfile(string username)
         {
+            return await GetProfileAsync(username);
+
+        }
+        [HttpGet("auth/{username}")]
+        [Authorize]
+        public async Task<ActionResult<Response<ProfileDTO>>> GetProfileAuth(string username)
+        {
+            return await GetProfileAsync(username);
+
+        }
+
+        private async Task<ActionResult<Response<ProfileDTO>>> GetProfileAsync(string username)
+        {
             Response<ProfileDTO> response = new Response<ProfileDTO>();
             try
             {
@@ -44,10 +57,16 @@ namespace MemesAPI.Controllers
                     response.Error = "Not Found";
                     return response;
                 }
-                var lastMemes = _mapper.Map<ICollection<MemeDTO>>(_context.Memes.Where(m => m.UserId == user.Id).OrderByDescending(m => m.Likes.Count).Take(5).ToImmutableHashSet());
-                if(lastMemes.Count==0)
+                var lastMemes = _mapper.Map<ICollection<MemeDTO>>(_context.Memes.Include(m => m.Tags).Where(m => m.UserId == user.Id).OrderByDescending(m => m.Likes.Count).Take(5).ToImmutableHashSet());
+                if (lastMemes.Count == 0)
                 {
-                    lastMemes=new HashSet<MemeDTO>();
+                    lastMemes = new HashSet<MemeDTO>();
+                }
+                foreach (var meme in lastMemes)
+                {
+                    meme.likeCount = await _context.MemeLike.Where(l=>l.MemeId==meme.Id).CountAsync();
+                    if(User.Identity.IsAuthenticated)
+                    meme.like = await _context.Memes.Where(m => m.Id == meme.Id&& m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();          
                 }
                 var profile = new ProfileDTO(user.UserName, user.Karma, user.profilePic, user.signature, lastMemes);
                 response.Data = profile;
@@ -61,9 +80,8 @@ namespace MemesAPI.Controllers
                 response.Message = "Error retriving profile";
                 return response;
             }
-
-
         }
+
         [HttpPut("changepassword")]
         [Authorize]
         public async Task<ActionResult<Response<bool>>> ChangePassword([FromBody]PasswordChange passwordChange)

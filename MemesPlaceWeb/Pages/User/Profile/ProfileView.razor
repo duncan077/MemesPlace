@@ -18,13 +18,21 @@
 @code {
     [Parameter]
     public string username { get; set; }
-    private ProfileDTO profile= new ProfileDTO();
-   [Inject] private IDialogService DialogService { get; set; }
-    protected override async Task OnInitializedAsync()
+    private ProfileDTO profile= new ProfileDTO() {  LastMemes=new HashSet<MemeDTO>()};
+    [Inject] private IDialogService DialogService { get; set; }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        await GetProfile();
-        
+        if(firstRender)
+        {
+            await GetProfile();
+            StateHasChanged();
+        }
+
     }
+    
+       
+        
+    
 
     private async Task GetProfile()
     {

@@ -23,8 +23,8 @@
     }
     public class MemeParameters : RequestParameters
     {
-public string name { get; set; } = string.Empty;
-        public string tag { get; set; } = string.Empty;
+public string? name { get; set; } = string.Empty;
+        public string? tag { get; set; } = string.Empty;
         public bool popular { get; set; } = false;
     }
 }

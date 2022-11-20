@@ -10,9 +10,11 @@
                 <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
                     <InfiniteScrolling ItemsProvider="GetMemesAsync">
                         <ItemTemplate Context="meme">
-                            <div class="p-4">
-                                <MemeComponent meme=meme.Data></MemeComponent>
-                            </div>
+                            @if (meme.IsSuccess)
+                            {
+                                <div class="p-4">
+                                    <MemeComponent meme=meme.Data></MemeComponent>
+                            </div>}
                         </ItemTemplate>
                         <LoadingTemplate>
                             <div><span class="oi oi-reload spin"></span> Loading more items...</div>
@@ -36,7 +38,7 @@
     {
         try
         {
-            var res = await mS.GetMemes(currentPage, "",false,"");
+            var res = await mS.GetMemes(currentPage, null,false,null);
            
             currentPage++;
            

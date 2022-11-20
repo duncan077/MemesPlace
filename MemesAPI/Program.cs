@@ -15,11 +15,11 @@ using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = Environment.GetEnvironmentVariable("ConnectionString");
-var googleId=Environment.GetEnvironmentVariable("GoogleClientId");
+var googleId= Environment.GetEnvironmentVariable("GoogleClientId");
 var googleSecret = Environment.GetEnvironmentVariable("GoogleClientSecret");
 // Add services to the container.
 builder.Services.AddDbContext<AppDBContext>(options => options
-                .UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+                .UseSqlServer(connectionString)
                 // The following three options help with debugging, but should
                 // be changed or removed for production.
                 .LogTo(Console.WriteLine, LogLevel.Information)

@@ -8,13 +8,13 @@ namespace MemesAPI.Models.User
     {
         [Required]
         [DataType(DataType.Password)]
-        public string CurrentPassword= string.Empty;
+        public string CurrentPassword { get; set; } = string.Empty;
         [Required]
         [DataType(DataType.Password)]
-        public string NewPassword = string.Empty;
+        public string NewPassword { get; set; } = string.Empty;
         [Required]
-        [DataType(DataType.Password)]
-        public string VerifyPassword = string.Empty;
+        [DataType(DataType.Password)] 
+        public string VerifyPassword { get; set; } = string.Empty;
 
     }
 }

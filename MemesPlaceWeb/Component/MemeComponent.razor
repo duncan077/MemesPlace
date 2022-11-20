@@ -1,6 +1,7 @@
 ﻿@inject IMemesService memeService
 @inject NavigationManager nav
 @using System.Security.Claims
+
 <MudCard Elevation="1" >
     <MudCardHeader>
         <CardHeaderAvatar>
@@ -57,10 +58,14 @@
 </MudCard>
 @code {
     [Parameter]
-    public MemeDTO meme { get; set; }
+    public MemeDTO meme { get; set; } = new MemeDTO() {Like=false, Tags=new List<string>() };
     [Parameter]
     public bool IsFull { get; set; } = false;
     [Inject] private IDialogService DialogService { get; set; }
+    protected override async Task OnParametersSetAsync()
+    {
+        StateHasChanged();
+    }
     private async Task Like()
     {
         var response = await memeService.Like(meme.Id);
@@ -76,6 +81,7 @@
         meme.Like =response.Data;
         StateHasChanged();
     }
+
     private void BnClick()
     {
         if (!IsFull)

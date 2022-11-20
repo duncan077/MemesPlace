@@ -119,8 +119,13 @@ namespace MemesPlaceWeb.Services.Meme
             Response<ProfileDTO> response = new Response<ProfileDTO>();
             try
             {
-                
-
+                var auth = await authenticationState.GetAuthenticationStateAsync();
+                if (auth.User.Identity.IsAuthenticated)
+                {
+                    await GetBearerToken();
+                    response = await client.Auth2Async(user);
+                }
+                  else
                 response = await client.UserAsync(user);
             }
             catch (ApiException ex)

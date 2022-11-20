@@ -15,7 +15,8 @@ namespace MemesAPI.Extension
 
                 .ForMember(x => x.UserName, opt => opt.MapFrom(src => src.UserName));
             CreateMap<Meme, MemeAddDTO>().ReverseMap();
-            CreateMap<Meme, MemeDTO>().ReverseMap();
+            CreateMap<Meme, MemeDTO>()
+                .ForMember(x=>x.Tags, opt=>opt.MapFrom(src=>src.Tags.Select(t=>t.Name)));
             CreateMap<Meme, MemeEditDTO>().ReverseMap();
             CreateMap<MemeUser, ProfileDTO>().ReverseMap();
 
