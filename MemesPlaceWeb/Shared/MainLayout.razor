@@ -15,7 +15,7 @@
                             <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@context.User.Identity.Name</MudChip>
                         </ActivatorContent>
                         <ChildContent>
-                        <MudMenuItem>Profile</MudMenuItem>
+                            <MudMenuItem><MudNavLink Href="/users/profile/" Match="NavLinkMatch.Prefix">Profile</MudNavLink></MudMenuItem>
                         <MudMenuItem>Settings</MudMenuItem>
                         <MudMenuItem><MudNavLink Href="/users/logout" Match="NavLinkMatch.Prefix">Logout</MudNavLink></MudMenuItem>
                         </ChildContent>

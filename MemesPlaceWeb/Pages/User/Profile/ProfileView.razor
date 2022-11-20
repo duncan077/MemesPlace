@@ -1,5 +1,7 @@
 ﻿@page "/users/profile/{username}"
+@page "/users/profile"
 @inject IMemesService _memeService
+@inject AuthenticationStateProvider authenticationState
 <MudContainer>
     <MudStack Class="col-4">
         <MudAvatar Image="@profile.ProfilePic"></MudAvatar>
@@ -24,6 +26,11 @@
     {
         if(firstRender)
         {
+            var auth = await authenticationState.GetAuthenticationStateAsync();
+            if (username == null && auth.User.Identity.IsAuthenticated)
+            {
+                username = auth.User.Identity.Name;
+            }
             await GetProfile();
             StateHasChanged();
         }

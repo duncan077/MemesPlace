@@ -384,7 +384,7 @@ namespace MemesAPI.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "DUNCANCACERESCARTASSO@GMAIL.COM",
                             NormalizedUserName = "DUNCAN088",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG55SM/WFC+ksOVOUx96V6k4N7L3X99EH8j7gwSIo+G763Jx5gRnVqnfJG8fSFk9Ow==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA9bCahuKiUR1/YkO8F7vi6spqkyPxBEjzaqbq++ekCahKsb/lpfqbUfwOEg28HcMQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "duncan088",

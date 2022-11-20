@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MemesAPI.Migrations
 {
     [DbContext(typeof(AppDBContext))]
-    [Migration("20221120054806_SqlServer")]
-    partial class SqlServer
+    [Migration("20221120062540_init")]
+    partial class init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -387,7 +387,7 @@ namespace MemesAPI.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "DUNCANCACERESCARTASSO@GMAIL.COM",
                             NormalizedUserName = "DUNCAN088",
-                            PasswordHash = "AQAAAAIAAYagAAAAEG55SM/WFC+ksOVOUx96V6k4N7L3X99EH8j7gwSIo+G763Jx5gRnVqnfJG8fSFk9Ow==",
+                            PasswordHash = "AQAAAAIAAYagAAAAEA9bCahuKiUR1/YkO8F7vi6spqkyPxBEjzaqbq++ekCahKsb/lpfqbUfwOEg28HcMQ==",
                             PhoneNumberConfirmed = false,
                             TwoFactorEnabled = false,
                             UserName = "duncan088",

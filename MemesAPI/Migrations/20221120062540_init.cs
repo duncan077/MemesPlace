@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace MemesAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class SqlServer : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -264,7 +264,7 @@ namespace MemesAPI.Migrations
             migrationBuilder.InsertData(
                 table: "AspNetUsers",
                 columns: new[] { "Id", "AccessFailedCount", "ConcurrencyStamp", "Discriminator", "Email", "EmailConfirmed", "Karma", "LockoutEnabled", "LockoutEnd", "NormalizedEmail", "NormalizedUserName", "PasswordHash", "PhoneNumber", "PhoneNumberConfirmed", "SecurityStamp", "TwoFactorEnabled", "UserName", "profilePic", "signature" },
-                values: new object[] { "043377e4-9f2c-42d3-9d02-88ea5adcfae7", 0, null, "MemeUser", "duncancacerescartasso@gmail.com", true, 1000, false, null, "DUNCANCACERESCARTASSO@GMAIL.COM", "DUNCAN088", "AQAAAAIAAYagAAAAEG55SM/WFC+ksOVOUx96V6k4N7L3X99EH8j7gwSIo+G763Jx5gRnVqnfJG8fSFk9Ow==", null, false, null, false, "duncan088", "", "" });
+                values: new object[] { "043377e4-9f2c-42d3-9d02-88ea5adcfae7", 0, null, "MemeUser", "duncancacerescartasso@gmail.com", true, 1000, false, null, "DUNCANCACERESCARTASSO@GMAIL.COM", "DUNCAN088", "AQAAAAIAAYagAAAAEA9bCahuKiUR1/YkO8F7vi6spqkyPxBEjzaqbq++ekCahKsb/lpfqbUfwOEg28HcMQ==", null, false, null, false, "duncan088", "", "" });
 
             migrationBuilder.InsertData(
                 table: "AspNetUserRoles",
