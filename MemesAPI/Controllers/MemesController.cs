@@ -314,10 +314,10 @@ namespace MemesAPI.Controllers
                         if (upload.IsSuccess)
                         {
                             meme.URLIMG = upload.Data.URL;
-                                  meme.Format = item.Imgfile.format;
+                                  meme.Format = upload.Data.Format;
                             meme.IsVideo= upload.Data.IsVideo;
                         }
-                        _logger.LogInformation($"Upload Failed {upload.Error}, {upload.IsSuccess}, {upload.Data}");
+                        
                     }
                     else
                     {
