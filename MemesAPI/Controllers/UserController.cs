@@ -68,7 +68,7 @@ namespace MemesAPI.Controllers
                     meme.likeCount = await _context.MemeLike.Where(l=>l.MemeId==meme.Id).CountAsync();
                     if(User.Identity.IsAuthenticated)
                     meme.like = await _context.Memes.Where(m => m.Id == meme.Id&& m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
-                    meme.imgProfile = (await _context.MemeUser.Where(u => u.UserName == dto.UserName).FirstOrDefaultAsync()).profilePic;
+                    meme.imgProfile = (await _context.MemeUser.Where(u => u.UserName == meme.UserName).FirstOrDefaultAsync()).profilePic;
                 }
                 var profile = new ProfileDTO(user.UserName, user.Karma, user.profilePic, user.signature, lastMemes);
                 response.Data = profile;
