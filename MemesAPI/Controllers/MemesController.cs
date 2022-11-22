@@ -86,6 +86,7 @@ namespace MemesAPI.Controllers
                             if (User.Identity.IsAuthenticated)
                                 dto.like = await appDBContext.Memes.Where(m => m.Id == dto.Id && m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
                             dto.imgProfile = (await appDBContext.MemeUser.Where(u=>u.UserName==dto.UserName).FirstOrDefaultAsync()).profilePic;
+                            
                         }
                     });
                     await Task.WhenAll(tasks);

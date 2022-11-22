@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Immutable;
 
 namespace MemesAPI.Controllers
@@ -66,7 +67,8 @@ namespace MemesAPI.Controllers
                 {
                     meme.likeCount = await _context.MemeLike.Where(l=>l.MemeId==meme.Id).CountAsync();
                     if(User.Identity.IsAuthenticated)
-                    meme.like = await _context.Memes.Where(m => m.Id == meme.Id&& m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();          
+                    meme.like = await _context.Memes.Where(m => m.Id == meme.Id&& m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
+                    meme.imgProfile = (await _context.MemeUser.Where(u => u.UserName == dto.UserName).FirstOrDefaultAsync()).profilePic;
                 }
                 var profile = new ProfileDTO(user.UserName, user.Karma, user.profilePic, user.signature, lastMemes);
                 response.Data = profile;
