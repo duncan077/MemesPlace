@@ -1516,7 +1516,7 @@ namespace MemesPlaceWeb.Services.Base
         public string Format { get; set; }
 
         [Newtonsoft.Json.JsonProperty("tags", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public System.Collections.Generic.ICollection<string> Tags { get; set; }
+        public System.Collections.Generic.ICollection<string> Tags { get; set; } = new HashSet<string>();
 
         [Newtonsoft.Json.JsonProperty("likeCount", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
         public int LikeCount { get; set; }

@@ -55,25 +55,26 @@
 
    
     <MudToolBar DisableGutters="true" Class="gap-4">
-        <MudButton OnClick="MemePost" Disabled="@(!memes.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
+        <MudButton OnClick="MemePost" Disabled="@(!memes.Any()&!IsTaskRunning)" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
         <MudButton OnClick="Clear" Disabled="@(!memes.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
     </MudToolBar>
 </MudStack>
 
 @code {
-        string message;
-  
-        List<MemeAddDTO> memes = new List<MemeAddDTO>();
+    string message;
+    bool IsTaskRunning = false;
+    List<MemeAddDTO> memes = new List<MemeAddDTO>();
 
     private bool Clearing = false;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
-  
+
 
     private async void OnInputFileChanged(InputFileChangeEventArgs e)
     {
         try
         {
+            IsTaskRunning = true;
             ClearDragClass();
             var files = e.GetMultipleFiles(20);
             foreach (var file in files)
@@ -88,6 +89,7 @@
                         IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") || file.ContentType.Contains("mov") || file.ContentType.Contains("quicktime") ? true : false)
                     });
             }
+            IsTaskRunning = false;
             StateHasChanged();
         }
         catch (Exception ex)
@@ -126,6 +128,7 @@
     }
     private async Task MemePost(){
       
+        
           //  await MessageService.Info("Thank you for filling the form.");
             try
             {

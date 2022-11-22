@@ -4,8 +4,10 @@
 
 <MudCard Elevation="1" >
     <MudCardHeader>
-        <CardHeaderAvatar>
-            <MudAvatar Color="Color.Secondary" Image="@meme.ImgProfile" >@meme.UserName</MudAvatar>
+        <CardHeaderAvatar  >
+            <MudItem Style="text-align:center;">
+            <MudAvatar onclick="@PlClick" Color="Color.Secondary" Image="@meme.ImgProfile"></MudAvatar>
+            <MudText onclick="@PlClick">@meme.UserName</MudText></MudItem>
         </CardHeaderAvatar>
         <CardHeaderContent>
 
@@ -27,17 +29,17 @@
     </MudCardHeader>
  
     
-    <MudCardContent onclick="@BnClick" Style="text-align: center; ">
+    <MudCardContent  Style="text-align: center; ">
         @if (meme.IsVideo)
         {
 
-            <video controls="" style="max-height: 800px;width: -webkit-fill-available;" name="media" ondblclick="@imgClick"><source src="@meme.Urlimg" type="@meme.Format"></video>
+            <video controls="" style="max-height: 800px;width: -webkit-fill-available;" name="media" ><source src="@meme.Urlimg" type="@meme.Format"></video>
         }
         else
         {
-            <MudImage ondblclick="@imgClick" ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Height="600" Src="@meme.Urlimg" Style="max-height: 800px; width: -webkit-fill-available;"></MudImage>
+            <MudImage  ondblclick="@imgClick" onclick="@BnClick"  ObjectFit="ObjectFit.ScaleDown" ObjectPosition="ObjectPosition.Center" Height="600" Src="@meme.Urlimg" Style="max-height: 800px; width: -webkit-fill-available;"></MudImage>
         }</MudCardContent>
-        <MudCardContent Class="m-lg-1">
+        <MudCardContent  Class="m-lg-1">
            @foreach (var tag in meme.Tags)
         {
             <MudButton>@tag</MudButton>
@@ -87,11 +89,14 @@
         if (!IsFull)
             nav.NavigateTo($"/Meme/{meme.Id}");
     }
+    private void PlClick()
+    {
+        
+            nav.NavigateTo($"/users/profile/{meme.UserName}");
+    }
     private async void imgClick()
     {
-        if (!IsFull)
-            nav.NavigateTo($"/Meme/{meme.Id}");
-        else
-            await Like();
+        await Like();
+
     }
 }

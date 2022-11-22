@@ -2,26 +2,110 @@
 @page "/users/profile"
 @inject IMemesService _memeService
 @inject AuthenticationStateProvider authenticationState
-<MudContainer>
-    <MudStack Class="col-4">
-        <MudAvatar Image="@profile.ProfilePic"></MudAvatar>
-        <MudText>@profile.UserName</MudText>
-    </MudStack>
-    <MudStack Class="col-8">
-        <MudText>The best memes of @profile.UserName</MudText>
+<div class="row">
+    <MudPaper Class="col-md-3">
+        <MudStack Style="width:-webkit-fit-content">
+            <MudPaper Style="text-align:center;">
+                <MudAvatar Image="@profile.ProfilePic" Style="height:200px;width:200px;">
+                </MudAvatar><AuthorizeView>
+                    <Authorized>
+                        @if (context.User.Identity.Name == profile.UserName)
+                        {
+                            <MudFileUpload T="IBrowserFile" A
+                                       ccept=".jpg,.png,.jpeg,.gif" FilesChanged="OnInputFileChanged">
+                                <ButtonTemplate Context="uploadContext">
+                                    <MudIconButton HtmlTag="label" Icon="@Icons.Material.Filled.Settings" Color="Color.Default" Style="margin-left: 75%;" for="@uploadContext" />
+
+                                </ButtonTemplate>
+                            </MudFileUpload>
+
+                        }
+                    </Authorized>
+
+                </AuthorizeView>
+                <MudText Align="Align.Center">@profile.UserName</MudText>
+            </MudPaper>
+                
+            <MudPaper >
+                <MudText >Karma: @profile.Karma</MudText>
+            <MudTextField Label="Signature" @bind-Value="@profile.Signature" Disabled="@(!IsUpdating)"></MudTextField>
+            @if(IsUpdating)
+                {
+                    <MudTextField Label="Current Password" @bind-Value="@profileChange.Password" InputType="InputType.Password"></MudTextField>
+                    <MudButton OnClick="@UpdateProfile">Update</MudButton>
+                    <MudButton OnClick="@Cancel">Cancel</MudButton>
+                }
+            </MudPaper>
+        </MudStack>
+    </MudPaper>
+    <MudPaper  Class="col-md-8">
+<MudStack >
+        <MudCardHeader Style="text-align:center;"><h2 style="position: relative;top: 50%;left: 50%;transform: translate(-50%, -50%);">The best memes of @profile.UserName</h2></MudCardHeader>
         @foreach (var item in profile.LastMemes)
         {
             <MemeComponent meme="item"></MemeComponent>
             
         }
     </MudStack>
-</MudContainer>
+    </MudPaper>
+
+    
+</div>
 
 @code {
     [Parameter]
     public string username { get; set; }
     private ProfileDTO profile= new ProfileDTO() {  LastMemes=new HashSet<MemeDTO>()};
     [Inject] private IDialogService DialogService { get; set; }
+    private ProfileChange profileChange = new ProfileChange() ;
+    private bool IsUpdating = false;
+
+    private void BnClick()
+    {
+        IsUpdating = true;
+    }
+    private void Cancel()
+    {
+        IsUpdating = false;
+    }
+
+    private async void OnInputFileChanged(IBrowserFile file)
+    {
+        try
+        {
+            IsUpdating = true;
+            if (!(file.Size > 8388608))
+            {
+                var buffers = new byte[file.Size];
+
+                await file.OpenReadStream(8388608).ReadAsync(buffers);
+
+                
+                profileChange.Image = new ImageFile { Data = buffers, Format = file.ContentType, Size = file.Size };
+                profileChange.IsFile = true;
+                profile.ProfilePic = FormImgtoUrl(profileChange.Image);
+                StateHasChanged();
+            }
+            else
+            {
+                bool? result = await DialogService.ShowMessageBox(
+             "Error",
+             "Error on selecting file Max 8MB"
+             );
+            }
+
+            
+        }
+        catch (Exception ex)
+        {
+            bool? result = await DialogService.ShowMessageBox(
+             "Error",
+             $"Error on selecting file Max 8MB, {ex.Message}"
+             );
+            StateHasChanged();
+        }
+
+    }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if(firstRender)
@@ -36,9 +120,26 @@
         }
 
     }
-    
-       
-        
+
+    private async Task UpdateProfile()
+    {
+
+        try
+        {
+            profileChange.ProfilePic = profile.ProfilePic; 
+            profileChange.Signature = profile.Signature ;
+            var result = await _memeService.ChangeProfile(profileChange);
+        }
+        catch (Exception ex)
+        {
+            
+           bool? result = await DialogService.ShowMessageBox(
+               "Warning",
+               $"Error Updating Profile, {ex.Message}"
+               );
+        }
+    }
+
     
 
     private async Task GetProfile()
@@ -66,6 +167,9 @@
         }
        
     }
-
+    private string FormImgtoUrl(ImageFile file)
+    {
+        return $"data:{file.Format};base64,{Convert.ToBase64String(file.Data)}";
+    }
    
 }
