@@ -2,6 +2,7 @@
 @page "/users/profile"
 @inject IMemesService _memeService
 @inject AuthenticationStateProvider authenticationState
+@inject NavigationManager nav
 <div class="row">
     <MudPaper Class="col-md-3">
         <MudStack Style="width:-webkit-fit-content">
@@ -80,7 +81,7 @@
 
                 await file.OpenReadStream(8388608).ReadAsync(buffers);
 
-                
+
                 profileChange.Image = new ImageFile { Data = buffers, Format = file.ContentType, Size = file.Size };
                 profileChange.IsFile = true;
                 profile.ProfilePic = FormImgtoUrl(profileChange.Image);
@@ -94,7 +95,7 @@
              );
             }
 
-            
+
         }
         catch (Exception ex)
         {
@@ -129,6 +130,18 @@
             profileChange.ProfilePic = profile.ProfilePic; 
             profileChange.Signature = profile.Signature ;
             var result = await _memeService.ChangeProfile(profileChange);
+            if (result.IsSuccess)
+            {
+                nav.NavigateTo("/users/profile");
+                IsUpdating = false;
+            }
+                else
+                {
+                bool? result2 = await DialogService.ShowMessageBox(
+          "Error",
+          $"Error on Updating Profile, {result.Error}"
+          );
+                }
         }
         catch (Exception ex)
         {
