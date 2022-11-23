@@ -1,7 +1,12 @@
 ﻿@inject IMemesService memeService
 @inject NavigationManager nav
 @using System.Security.Claims
-
+<HeadContent>
+    <meta property="og:title" content="@meme.Name" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://memesplacedemo.azurewebsites.net/" />
+    <meta property="og:image" content="@meme.Urlimg" />
+</HeadContent>
 <MudCard Elevation="1" >
     <MudCardHeader>
         <CardHeaderAvatar  >
@@ -55,7 +60,8 @@
             <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" OnClick="Like" />
         }
        
-        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" />
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" Href="@Share" data-action="share/whatsapp/share" />
+        <MudText >Likes @meme.LikeCount</MudText>
     </MudCardActions>
 </MudCard>
 @code {
@@ -63,9 +69,11 @@
     public MemeDTO meme { get; set; } = new MemeDTO() {Like=false, Tags=new List<string>() };
     [Parameter]
     public bool IsFull { get; set; } = false;
+    private string Share = "";
     [Inject] private IDialogService DialogService { get; set; }
     protected override async Task OnParametersSetAsync()
     {
+        Share = $"https://api.whatsapp.com/send?text=memesplacedemo.azurewebsites.net/Meme/{meme.Id}";
         StateHasChanged();
     }
     private async Task Like()

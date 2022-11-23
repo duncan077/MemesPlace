@@ -118,13 +118,13 @@ namespace MemesAPI.Controllers
             var memes = new List<Meme>();
             if (memeParameters.name == "" && memeParameters.tag == "")
             {
-                memes = await _context.Memes.Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
             }
             else
             {
                 if (memeParameters.name != "")
                 {
-                    memes = await _context.Memes
+                    memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
                        .Where(m => m.UserName == memeParameters.name)
                        .OrderByDescending(m => m.Date)
@@ -133,7 +133,7 @@ namespace MemesAPI.Controllers
                 }
                 else
                 {
-                    memes = await _context.Memes
+                    memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
                        .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
                        .OrderByDescending(m => m.Date)
@@ -149,13 +149,13 @@ namespace MemesAPI.Controllers
             var memes = new List<Meme>();
             if (memeParameters.name == "" && memeParameters.tag == "")
             {
-                memes = await _context.Memes.Include(t => t.Tags).OrderByDescending(m => m.Likes.Count).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).OrderByDescending(m => m.Likes.Count).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
             }
             else
             {
                 if (memeParameters.name != "")
                 {
-                    memes = await _context.Memes
+                    memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
                        .Where(m => m.UserName == memeParameters.name)
                        .OrderByDescending(m => m.Likes.Count)
@@ -164,7 +164,7 @@ namespace MemesAPI.Controllers
                 }
                 else
                 {
-                    memes = await _context.Memes
+                    memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
                        .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
                        .OrderByDescending(m => m.Likes.Count)
@@ -199,7 +199,7 @@ namespace MemesAPI.Controllers
                 {
                     return NotFound(response);
                 }
-                var meme = await _context.Memes.Include(l => l.Likes).Include(t => t.Tags).FirstAsync(m=>m.Id==id);
+                var meme = await _context.Memes.AsNoTracking().Include(t => t.Tags).FirstAsync(m=>m.Id==id);
 
                 if (meme == null)
                 {
@@ -213,10 +213,10 @@ namespace MemesAPI.Controllers
                         dto.Tags.Add(item.Name);
                     }
                 }
-                
-                dto.likeCount = meme.Likes.Count();
+                dto.imgProfile = (await _context.MemeUser.AsNoTracking().Where(u => u.UserName == dto.UserName).FirstOrDefaultAsync()).profilePic;
+                dto.likeCount = await _context.MemeLike.Where(l => l.MemeId == dto.Id).CountAsync(); 
                 if (User.Identity.IsAuthenticated)
-                    dto.like = meme.Likes.Any(z => z.UserName == User.Identity.Name);
+                    dto.like = await _context.Memes.Where(m => m.Id == dto.Id && m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
                 response.IsSuccess = true;
                 response.Data= dto;
                 return response;
