@@ -362,28 +362,38 @@ namespace MemesAPI.Controllers
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<ActionResult<Response<bool>>> DeleteMeme(int id)
-        {
-            Response<bool> response = new Response<bool>() { Data = false };
-            if (_context.Memes == null)
+        { Response<bool> response = new Response<bool>() { Data = false };
+            try
             {
-                return NotFound(response);
-            }
-            var meme = await _context.Memes.FindAsync(id);
-            if (meme == null)
-            {
-                return NotFound(response);
-            }
-            if (!User.IsInRole("admin"))
-            {
-                if (meme.UserName != User.Identity.Name)
+                if (_context.Memes == null)
                 {
-                    return Unauthorized(response);
+                    return NotFound(response);
                 }
+                var meme = await _context.Memes.FindAsync(id);
+                if (meme == null)
+                {
+                    return NotFound(response);
+                }
+                
+                    if (meme.UserName != User.Identity.Name)
+                    {
+                        return Unauthorized(response);
+                    }
+                
+                _context.Memes.Remove(meme);
+                await _context.SaveChangesAsync();
+                response = new Response<bool>() { Data = true, IsSuccess = true, Message = $"Meme {id} Deleted" };
+                _logger.LogInformation($"Username {User.Identity.Name} deleted memeid {id}");
+                return Ok(response);
             }
-            _context.Memes.Remove(meme);
-            await _context.SaveChangesAsync();
-            response =new Response<bool>(){ Data = true,IsSuccess=true,Message=$"Meme {id} Deleted" };
-            return Ok(response);
+            catch (Exception ex)
+            {
+                _logger.LogInformation($"Username {User.Identity.Name} tried deleting memeid {id}");
+                response.Error = ex.Message;
+                return BadRequest(response);
+            }
+           
+          
         }
         private async Task GetTags(List<string> tags , Meme meme)
         {

@@ -11,5 +11,6 @@ namespace MemesPlaceWeb.Services.Meme
         Task<Response<ProfileDTO>> GetProfile(string user);
         Task<Response<bool>> ChangePassword(PasswordChange passwordChange);
         Task<Response<bool>> ChangeProfile(ProfileChange profile);
+        Task<Response<bool>> Delete(int meme);
     }
 }

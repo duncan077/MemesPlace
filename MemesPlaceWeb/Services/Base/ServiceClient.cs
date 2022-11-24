@@ -1463,6 +1463,7 @@ namespace MemesPlaceWeb.Services.Base
     {
         [Newtonsoft.Json.JsonProperty("name", Required = Newtonsoft.Json.Required.Always)]
         [System.ComponentModel.DataAnnotations.Required]
+        [System.ComponentModel.DataAnnotations.StringLength(125, MinimumLength = 5)]
         public string Name { get; set; }
 
         [Newtonsoft.Json.JsonProperty("description", Required = Newtonsoft.Json.Required.Default, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
@@ -1522,7 +1523,7 @@ namespace MemesPlaceWeb.Services.Base
         public int LikeCount { get; set; }
 
         [Newtonsoft.Json.JsonProperty("like", Required = Newtonsoft.Json.Required.DisallowNull, NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore)]
-        public bool Like { get; set; }
+        public bool Like { get; set; } = false;
 
     }
 

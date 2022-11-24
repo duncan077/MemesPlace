@@ -114,6 +114,23 @@ namespace MemesPlaceWeb.Services.Meme
             }
         return response;
         }
+        public async Task<Response<bool>> Delete(int meme)
+        {
+            Response<bool> response = new Response<bool>();
+            try
+            {
+                await GetBearerToken();
+
+                response = await client.MemesDELETEAsync(meme);
+            }
+            catch (ApiException ex)
+            {
+                response.Error = ex.Message;
+                response.IsSuccess = false;
+
+            }
+            return response;
+        }
         public async Task<Response<ProfileDTO>> GetProfile(string user)
         {
             Response<ProfileDTO> response = new Response<ProfileDTO>();

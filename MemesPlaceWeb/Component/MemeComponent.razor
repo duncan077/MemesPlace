@@ -24,10 +24,14 @@
         <CardHeaderActions>
             <AuthorizeView>
                 <Authorized>
-                    @if (context.User.Identity.Name==meme.UserName){
-<MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" />
-                    } </Authorized>
-                   
+                    @if (context.User.Identity.Name == meme.UserName)
+                    {
+                        <MudMenu Icon="@Icons.Material.Filled.Settings">
+                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" />
+                        </MudMenu>
+                    }
+                </Authorized>
+
             </AuthorizeView>
            
         </CardHeaderActions>
@@ -96,7 +100,21 @@
         meme.Like =response.Data;
         StateHasChanged();
     }
-
+    private async Task Delete()
+    {
+        var response = await memeService.Delete(meme.Id);
+        if (!response.IsSuccess)
+        {
+            bool? result = await DialogService.ShowMessageBox(
+              "Warning",
+              "Error deleting the meme"
+              );
+        }
+        else
+        {
+            nav.NavigateTo("", true);
+        }
+    }
     private async void BnClick()
     {
         if (!IsFull)
