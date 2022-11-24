@@ -1,0 +1,31 @@
+﻿@inject NavigationManager nav
+<MudToolBar Style="text-align:center;margin-left:25%;">
+    <MudTextField T=string Label="Search" HelperText="Type something" @bind-Text=text></MudTextField>
+    <MudMenu Label="Filter">
+        <MudMenuItem>
+            <MudCheckBox T="bool" @bind-Checked="IsTag" Label="Is Tag"></MudCheckBox>
+        </MudMenuItem>
+        <MudMenuItem>
+            <MudCheckBox T="bool" @bind-Checked="IsPopular" Label="Popular"></MudCheckBox>
+        </MudMenuItem>
+    </MudMenu>
+    <MudIconButton Icon="@Icons.Material.Filled.Search" OnClick="Search" aria-label="Search"></MudIconButton>
+</MudToolBar>
+
+@code {
+    string text="";
+    bool IsTag { get; set; } = false;
+    bool IsPopular { get; set; } = false;
+    private async Task Search()
+    {
+        if(!IsTag)
+        {
+            nav.NavigateTo($"/search?name={text}&popular={IsPopular}", true);
+        }
+        else
+        {
+            nav.NavigateTo($"/search?tag={text}&popular={IsPopular}",true);
+        }
+        
+    }
+}

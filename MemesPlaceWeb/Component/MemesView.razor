@@ -1,0 +1,90 @@
+﻿
+@inject IMemesService mS
+@using MemesPlaceWeb.Extensions;
+
+@inject NavigationManager NavManager
+@using MemesPlaceWeb.Component
+<PageTitle>@pageTitle</PageTitle>
+<MudContainer Style="text-align:center;">
+    <div class="col-12 col-lg-10 mx-auto">
+        <div class="row">
+            <div class="col" style="flex: 1 0 70%;">
+                <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
+                    <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
+
+                        <InfiniteScrolling @ref="infiniteScrolling" ItemsProvider="GetMemesAsync">
+                            <ItemTemplate Context="meme">
+                                @if (meme.IsSuccess)
+                                {
+                                    <div class="p-4">
+                                        <MemeComponent meme=meme.Data></MemeComponent>
+                                    </div>
+                                }
+                            </ItemTemplate>
+                            <LoadingTemplate>
+                                <div><span class="oi oi-reload spin"></span> Loading more items...</div>
+                            </LoadingTemplate>
+                        </InfiniteScrolling>
+
+                    </div>
+                </div>
+            </div>
+            <div class="col"></div>
+        </div>
+    </div>
+</MudContainer>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "popular")]
+    public bool IsPopular { get; set; } = false;
+    [Parameter]
+    public bool IsSearch { get; set; } = false;
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "name")]
+    public string _name { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "tag")]
+    public string _tag { get; set; }
+    public string pageTitle = "MemesPlace";
+    private int currentPage = 1;
+    private InfiniteScrolling<Response<MemeDTO>> infiniteScrolling = new();
+    [Inject] private IDialogService DialogService { get; set; }
+
+
+    protected override void OnInitialized()
+    {
+
+
+    }
+
+    public async Task<IEnumerable<Response<MemeDTO>>> GetMemesAsync(InfiniteScrollingItemsProviderRequest request)
+    {
+        try
+        {
+            var name = _name is not null ? _name : null;
+            var tag = _tag is not null ? _tag : null;
+            var res = await mS.GetMemes(currentPage, tag, IsPopular, name);
+
+            currentPage++;
+
+            return res;
+        }
+        catch (Exception ex)
+        {
+            bool? result = await DialogService.ShowMessageBox(
+              "Warning",
+              $"Error retriving memes, {ex.Message}"
+              );
+            return null;
+        }
+
+    }
+    async Task refresh(bool e)
+    {
+        currentPage = 1;
+        IsPopular = e;
+        await infiniteScrolling.Refresh();
+
+    }
+}

@@ -1,0 +1,88 @@
+﻿@inject NavigationManager nav
+@inject IJSRuntime JS
+@inject DisqusState DisqusState
+@using MemesPlaceWeb.Component
+@using MemesPlaceWeb.Services.Disqus;
+<PageTitle>@pageTitle</PageTitle>
+
+        <MudContainer Style="max-height:800px; overflow-y: scroll; text-align:center;"> 
+<div class="col-12 col-lg-10 mx-auto">
+    <div class="row">
+        <div class="col" style="flex: 1 0 70%;">
+            <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
+                <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
+
+                            <div class="p-4">
+                            <MemeComponent meme=meme IsFull=true></MemeComponent>
+                            </div>
+                            <div class="p-4">
+                        <div @ref="@disqusBody" class="content px-4">
+
+            <div id="disqus_thread" ></div>     
+    </div>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+                    </div>    
+                </div>
+            </div>
+        </div>
+
+    </div>
+            </div>
+        </MudContainer>
+
+@code {
+    [Parameter]
+    public MemeDTO meme { get; set; } = new MemeDTO();
+    public string pageTitle = "MemesPlace";
+    private string PAGE_URL = "https://memesplacedemo.azurewebsites.net/Meme/";
+    private string PAGE_IDENTIFIER = "NotFound";
+    private ElementReference disqusBody;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            pageTitle = $"MemesPlace - {meme.Name}";
+            PAGE_IDENTIFIER = meme.Id.ToString();
+            PAGE_URL = $"https://memesplacedemo.azurewebsites.net/Meme/{meme.Id}";
+            ChangeUrl();
+            await CreateDisqus();
+
+            StateHasChanged();
+        }
+      
+
+    }
+    void ChangeUrl()
+    {
+        // You can also change it to any url you want
+        JS.InvokeVoidAsync("ChangeUrl", PAGE_URL);
+    }
+    private async Task CreateDisqus()
+    {
+
+        try
+        {
+            await DisqusInterop.CreateDisqus(
+                    JS,
+                    disqusBody,
+                    @$"https://memesfun.disqus.com/embed.js");
+            await DisqusInterop.ResetDisqus(
+                      JS,
+                      PAGE_IDENTIFIER,
+                      PAGE_URL,
+                      meme.Name);
+
+            DisqusState.SetDisplayDisqus(true);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);    
+        }
+
+    }
+
+
+
+
+}

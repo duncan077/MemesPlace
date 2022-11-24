@@ -61,6 +61,12 @@
 
         StateHasChanged(); // Display the new items and hide the loading indicator
     }
+    public async Task Refresh()
+    {
+        _items.Clear();
+
+        StateHasChanged();
+    }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {

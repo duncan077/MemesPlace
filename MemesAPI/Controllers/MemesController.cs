@@ -126,7 +126,7 @@ namespace MemesAPI.Controllers
                 {
                     memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
-                       .Where(m => m.UserName == memeParameters.name)
+                       .Where(m => m.Name.ToLower().Contains(memeParameters.name.ToLower()))
                        .OrderByDescending(m => m.Date)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
@@ -135,7 +135,7 @@ namespace MemesAPI.Controllers
                 {
                     memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
-                       .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
+                       .Where(m => m.Tags.Any(t => t.Name.ToLower().Contains(memeParameters.tag.ToLower())))
                        .OrderByDescending(m => m.Date)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
@@ -157,7 +157,7 @@ namespace MemesAPI.Controllers
                 {
                     memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
-                       .Where(m => m.UserName == memeParameters.name)
+                       .Where(m => m.Name.ToLower().Contains(memeParameters.name.ToLower()))
                        .OrderByDescending(m => m.Likes.Count)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
@@ -166,7 +166,7 @@ namespace MemesAPI.Controllers
                 {
                     memes = await _context.Memes.AsNoTracking()
                        .Include(t => t.Tags)
-                       .Where(m => m.Tags.Any(t => t.Name == memeParameters.tag))
+                       .Where(m => m.Tags.Any(t => t.Name.ToLower().Contains(memeParameters.tag.ToLower())))
                        .OrderByDescending(m => m.Likes.Count)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();

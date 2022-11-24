@@ -4,6 +4,7 @@
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @using System.ComponentModel.DataAnnotations
+@using MemesPlaceWeb.Providers;
 
 <h3 style=" text-align: center;">MemeUpload</h3>
 
@@ -15,7 +16,7 @@
 
 <MudStack Justify="Justify.Center" Class="p-4">
     <MudFileUpload  T="IReadOnlyList<IBrowserFile>" Accept=".jpg,.png,.jpeg,.mp4,.mkv,.avi,.gif,.webm,.mov" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
-                   @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass">
+                   @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" >
         <ButtonTemplate>
             <MudPaper Height="200" Outlined="true" Class="@DragClass">
                 <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
@@ -60,6 +61,7 @@
     </MudToolBar>
 </MudStack>
 
+
 @code {
     string message;
     bool IsTaskRunning = false;
@@ -74,7 +76,7 @@
     {
         try
         {
-            IsTaskRunning = true;
+
             ClearDragClass();
             var files = e.GetMultipleFiles(20);
             foreach (var file in files)
@@ -89,7 +91,7 @@
                         IsVideo = (file.ContentType.Contains("mp4") || file.ContentType.Contains("mkv") || file.ContentType.Contains("avi") || file.ContentType.Contains("webm") || file.ContentType.Contains("mov") || file.ContentType.Contains("quicktime") ? true : false)
                     });
             }
-            IsTaskRunning = false;
+
             StateHasChanged();
         }
         catch (Exception ex)
@@ -100,7 +102,7 @@
              );
             StateHasChanged();
         }
-        
+
     }
 
     private async Task Clear()
@@ -126,39 +128,42 @@
     {
         DragClass = DefaultDragClass;
     }
-    private async Task MemePost(){
-      
-        
-          //  await MessageService.Info("Thank you for filling the form.");
-            try
+    private async Task MemePost()
+    {
+
+
+        //  await MessageService.Info("Thank you for filling the form.");
+        try
+        {
+            IsTaskRunning = true;
+            var response = await memeService.AddMeme(memes);
+            if (response.Any(a => a.IsSuccess))
             {
-                var response = await memeService.AddMeme(memes);
-                if (response.Any(a=>a.IsSuccess))
-                {
-                    nav.NavigateTo("/");
-                }
-                else
-                {
+                nav.NavigateTo("/");
+            }
+            else
+            {
                 bool? result = await DialogService.ShowMessageBox(
           "Error",
           $"Error on selecting file, {response.FirstOrDefault().Error}"
           );
-                }
-                 
             }
-            catch (ApiException ex)
-            {
+            IsTaskRunning = false;
+
+        }
+        catch (ApiException ex)
+        {
             bool? result = await DialogService.ShowMessageBox(
              "Error",
              $"Error on selecting file, {ex.Message}"
              );
-                message = ex.Message;
-            }
-           
+            message = ex.Message;
+            IsTaskRunning = false;
         }
-        
-    
 
+    }
+
+    
 }
 
 

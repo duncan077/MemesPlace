@@ -1,0 +1,14 @@
+﻿@page "/search"
+<MemesView IsPopular=@IsPopular IsSearch=true _name="@_name" _tag="@_tag"></MemesView>
+
+@code {
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "popular")]
+    public bool IsPopular { get; set; } = false;
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "name")]
+    public string _name { get; set; }
+    [Parameter]
+    [SupplyParameterFromQuery(Name = "tag")]
+    public string _tag { get; set; }
+}

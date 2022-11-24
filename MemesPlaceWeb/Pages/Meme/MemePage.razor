@@ -1,57 +1,16 @@
 ﻿@page "/Meme"
 @page "/"
-@inject IMemesService mS
-@using MemesPlaceWeb.Component
-<PageTitle>@pageTitle</PageTitle>
-<div class="col-12 col-lg-10 mx-auto">
-    <div class="row">
-        <div class="col" style="flex: 1 0 70%;">
-            <div class="position-relative" style="display: flex;flex-wrap: wrap;justify-content: flex-end;">
-                <div style="position: relative;flex: 0 0 100%;transform: translate3d(0, 0%, 0);transform-origin: center;">
-                    <InfiniteScrolling ItemsProvider="GetMemesAsync">
-                        <ItemTemplate Context="meme">
-                            @if (meme.IsSuccess)
-                            {
-                                <div class="p-4">
-                                    <MemeComponent meme=meme.Data></MemeComponent>
-                            </div>}
-                        </ItemTemplate>
-                        <LoadingTemplate>
-                            <div><span class="oi oi-reload spin"></span> Loading more items...</div>
-                        </LoadingTemplate>
-                    </InfiniteScrolling>
-                 
-                </div>
-            </div>
-        </div>
-        <div class="col"></div>
-    </div>
-</div>
+<MemesView IsSearch=false ></MemesView>
 
 @code {
-    public string pageTitle = "MemesPlace";
-    private int currentPage = 1;
-    List<MemeDTO> memes=new List<MemeDTO>(); 
-    [Inject] private IDialogService DialogService { get; set; }
-   
-    public async Task<IEnumerable<Response<MemeDTO>>> GetMemesAsync(InfiniteScrollingItemsProviderRequest request)
+  
+
+    bool IsSearch { get; set; } = false;
+  
+    protected override void OnInitialized()
     {
-        try
-        {
-            var res = await mS.GetMemes(currentPage, null,false,null);
-           
-            currentPage++;
-           
-            return res;
-        }
-        catch (Exception ex) 
-        {
-            bool? result = await DialogService.ShowMessageBox(
-              "Warning",
-              $"Error retriving memes, {ex.Message}"
-              );
-            return null;
-        }
-        
+
+
     }
+
 }

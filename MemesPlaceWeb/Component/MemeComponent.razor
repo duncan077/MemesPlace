@@ -64,6 +64,7 @@
         <MudText >Likes @meme.LikeCount</MudText>
     </MudCardActions>
 </MudCard>
+
 @code {
     [Parameter]
     public MemeDTO meme { get; set; } = new MemeDTO() {Like=false, Tags=new List<string>() };
@@ -71,9 +72,13 @@
     public bool IsFull { get; set; } = false;
     private string Share = "";
     [Inject] private IDialogService DialogService { get; set; }
+
+
+
+    private DialogOptions dialogOptions = new() { FullWidth = true };
     protected override async Task OnParametersSetAsync()
     {
-        Share = $"https://api.whatsapp.com/send?text=memesplacedemo.azurewebsites.net/Meme/{meme.Id}";
+        Share = $"https://api.whatsapp.com/send?text=https://memesplacedemo.azurewebsites.net/Meme/{meme.Id}";
         StateHasChanged();
     }
     private async Task Like()
@@ -92,10 +97,15 @@
         StateHasChanged();
     }
 
-    private void BnClick()
+    private async void BnClick()
     {
         if (!IsFull)
-            nav.NavigateTo($"/Meme/{meme.Id}");
+        // nav.NavigateTo($"/Meme/{meme.Id}");
+        {
+            var options =  new DialogOptions() { MaxWidth = MaxWidth.Medium, FullWidth = true };
+            var parameters = new DialogParameters{["meme"] = meme};
+            DialogService.Show<MemeModal>("", parameters, options);
+        }
     }
     private void PlClick()
     {
