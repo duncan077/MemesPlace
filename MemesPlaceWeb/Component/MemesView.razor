@@ -1,6 +1,6 @@
 ﻿
 @inject IMemesService mS
-@using MemesPlaceWeb.Extensions;
+
 
 @inject NavigationManager NavManager
 @using MemesPlaceWeb.Component
@@ -36,15 +36,13 @@
 
 @code {
     [Parameter]
-    [SupplyParameterFromQuery(Name = "popular")]
-    public bool IsPopular { get; set; } = false;
+    public bool IsPopular { get; set; } 
     [Parameter]
-    public bool IsSearch { get; set; } = false;
+    public bool IsSearch { get; set; } 
     [Parameter]
-    [SupplyParameterFromQuery(Name = "name")]
+
     public string _name { get; set; }
     [Parameter]
-    [SupplyParameterFromQuery(Name = "tag")]
     public string _tag { get; set; }
     public string pageTitle = "MemesPlace";
     private int currentPage = 1;

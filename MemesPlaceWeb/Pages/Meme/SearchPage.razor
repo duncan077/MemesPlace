@@ -4,7 +4,7 @@
 @code {
     [Parameter]
     [SupplyParameterFromQuery(Name = "popular")]
-    public bool IsPopular { get; set; } = false;
+    public bool IsPopular { get; set; }
     [Parameter]
     [SupplyParameterFromQuery(Name = "name")]
     public string _name { get; set; }

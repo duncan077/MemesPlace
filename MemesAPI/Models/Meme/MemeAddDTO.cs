@@ -8,6 +8,8 @@ namespace MemesAPI.Models.Meme
     public class MemeAddDTO
     {
         [Required]
+        [MaxLength(125)]
+        [MinLength(5)]
         public string Name { get; set; } = "";
         public string Description { get; set; } = "";
         public bool IsFile { get; set; } = false;

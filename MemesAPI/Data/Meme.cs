@@ -15,7 +15,7 @@ namespace MemesAPI.Data
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         [Required]
-        [MaxLength(60)]
+        [MaxLength(125)]
         [MinLength(5)]
         public string Name { get; set; } = "";
         [MaxLength(100)]

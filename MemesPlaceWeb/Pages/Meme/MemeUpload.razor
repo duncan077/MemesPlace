@@ -1,11 +1,12 @@
 ﻿@page "/upload"
 @inject NavigationManager nav
+@inject IJSRuntime JSRuntime
 @inject IMemesService memeService
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @using System.ComponentModel.DataAnnotations
 @using MemesPlaceWeb.Providers;
-
+@implements IAsyncDisposable
 <h3 style=" text-align: center;">MemeUpload</h3>
 
 @if (!string.IsNullOrEmpty(message))
@@ -15,15 +16,19 @@
 }
 
 <MudStack Justify="Justify.Center" Class="p-4">
-    <MudFileUpload  T="IReadOnlyList<IBrowserFile>" Accept=".jpg,.png,.jpeg,.mp4,.mkv,.avi,.gif,.webm,.mov" OnFilesChanged="OnInputFileChanged" Hidden="false" Class="flex-1" InputClass="absolute mud-width-full mud-height-full overflow-hidden z-20" InputStyle="opacity:0"
-                   @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" >
-        <ButtonTemplate>
-            <MudPaper Height="200" Outlined="true" Class="@DragClass">
-                <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
-                
-            </MudPaper>
-        </ButtonTemplate>
-    </MudFileUpload>
+    <div @ondragenter="@SetDragClass" @ondragleave="@ClearDragClass" @ondragend="@ClearDragClass" @ref="dropZoneElement" Outlined="true" Class="@DragClass">
+        @if (!Clearing)
+        {
+            <InputFile OnChange="OnInputFileChanged" @ref="inputFile" multiple class="absolute mud-width-full mud-height-full overflow-hidden z-2" style="opacity:0;" />
+        }
+        <MudText Typo="Typo.h6">Drag and drop files here or click</MudText>
+ 
+    </div>
+    <MudToolBar DisableGutters="true" Class="gap-4">
+        <MudButton OnClick="MemePost" Disabled="@(!memes.Any())" Color="Color.Primary" Variant="Variant.Filled">Upload</MudButton>
+        <MudButton OnClick="Clear" Disabled="@(!memes.Any())" Color="Color.Error" Variant="Variant.Filled">Clear</MudButton>
+    </MudToolBar>
+
     
                         @foreach (var file in memes)
                         {
@@ -52,7 +57,7 @@
 
                                     </MudCard>
                                </MudItem>
-                        }
+                        
 
    
     <MudToolBar DisableGutters="true" Class="gap-4">
@@ -70,7 +75,22 @@
     private bool Clearing = false;
     private static string DefaultDragClass = "relative rounded-lg border-2 border-dashed pa-4 mt-4 mud-width-full mud-height-full";
     private string DragClass = DefaultDragClass;
+    ElementReference dropZoneElement;
+    InputFile inputFile;
 
+    IJSObjectReference _module;
+    IJSObjectReference _dropZoneInstance;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Load the JS file
+            _module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./FileDrop.js");
+
+            // Initialize the drop zone
+            _dropZoneInstance = await _module.InvokeAsync<IJSObjectReference>("initializeFileDropZone", dropZoneElement, inputFile.Element);
+        }
+    }
 
     private async void OnInputFileChanged(InputFileChangeEventArgs e)
     {
@@ -162,6 +182,20 @@
         }
 
     }
+    public async ValueTask DisposeAsync()
+    {
+        if (_dropZoneInstance != null)
+        {
+            await _dropZoneInstance.InvokeVoidAsync("dispose");
+            await _dropZoneInstance.DisposeAsync();
+        }
+
+        if (_module != null)
+        {
+            await _module.DisposeAsync();
+        }
+    }
+}
 
     
 }

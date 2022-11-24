@@ -7,40 +7,34 @@
 <MudLayout>
     <MudAppBar Elevation="1">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
+         
+            <MudToolBar>
             <SearchBar></SearchBar>
-        <MudSpacer />
+            <MudSpacer />
             <AuthorizeView>
                 <Authorized>
-                    <MudMenu  Color="Color.Inherit">
+                    <MudMenu Color="Color.Inherit">
                         <ActivatorContent>
                             <MudChip Icon="@Icons.Material.Filled.Person" Color="Color.Primary">@context.User.Identity.Name</MudChip>
                         </ActivatorContent>
                         <ChildContent>
                             <MudMenuItem><MudNavLink Href="/users/profile/" Match="NavLinkMatch.Prefix">Profile</MudNavLink></MudMenuItem>
-                        <MudMenuItem><MudNavLink Href="/users/profile/settings" Match="NavLinkMatch.Prefix">Settings</MudNavLink></MudMenuItem>
-                        <MudMenuItem><MudNavLink Href="/users/logout" Match="NavLinkMatch.Prefix">Logout</MudNavLink></MudMenuItem>
+                            <MudMenuItem><MudNavLink Href="/users/profile/settings" Match="NavLinkMatch.Prefix">Settings</MudNavLink></MudMenuItem>
+                            <MudMenuItem><MudNavLink Href="/users/logout" Match="NavLinkMatch.Prefix">Logout</MudNavLink></MudMenuItem>
                         </ChildContent>
                     </MudMenu>
                 </Authorized>
                 <NotAuthorized>
-                    <MudSpacer />
-                    <MudGrid >
-                         <MudSpacer />
-                         <MudItem >
 
-                    <MudNavLink  Href="/users/login" Match="NavLinkMatch.Prefix" >Login</MudNavLink>
-                    </MudItem>
+                    <MudNavLink  Href="/users/login" Match="NavLinkMatch.Prefix">Login</MudNavLink>
 
-                    <MudItem >
+                    <MudNavLink Href="/users/register" Match="NavLinkMatch.Prefix">Register</MudNavLink>
 
-                            <MudNavLink Href="/users/register" Match="NavLinkMatch.Prefix">Register</MudNavLink>
-                    </MudItem>
 
-                     </MudGrid>
                 </NotAuthorized>
             </AuthorizeView>
-        
-    </MudAppBar>
+            </MudToolBar>
+        </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen" Elevation="2">
         <MudDrawerHeader>
             <MudText Typo="Typo.h5" Class="mt-1">MemesPlace</MudText>
