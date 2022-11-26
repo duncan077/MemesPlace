@@ -27,7 +27,7 @@
                     @if (context.User.Identity.Name == meme.UserName)
                     {
                         <MudMenu Icon="@Icons.Material.Filled.Settings">
-                            <MudIconButton Icon="@Icons.Material.Filled.Delete" Color="Color.Default" />
+                            <MudIconButton OnClick=Delete Icon="@Icons.Material.Filled.Delete" Color="Color.Default" />
                         </MudMenu>
                     }
                 </Authorized>
