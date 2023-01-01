@@ -1,6 +1,6 @@
 ﻿@inject NavigationManager nav
 <MudToolBar Style="text-align:center;">
-    <MudTextField T=string Label="Search"  @bind-Text=text></MudTextField>
+    <MudTextField T=string Label="Search"  @bind-Text=text Style="width:200px"></MudTextField>
     <MudMenu Label="Filter">
         <MudMenuItem>
             <MudCheckBox T="bool" @bind-Checked="IsTag" Label="Is Tag"></MudCheckBox>

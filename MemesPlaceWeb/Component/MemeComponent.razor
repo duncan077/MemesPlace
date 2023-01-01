@@ -64,7 +64,7 @@
             <MudIconButton Icon="@Icons.Material.Filled.Favorite" Color="Color.Default" OnClick="Like" />
         }
        
-        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" Href="@Share" data-action="share/whatsapp/share" />
+        <MudIconButton Icon="@Icons.Material.Filled.Share" Color="Color.Default" Href="@Share" data-action="share/whatsapp/share" target="_blank" />
         <MudText >Likes @meme.LikeCount</MudText>
     </MudCardActions>
 </MudCard>
@@ -82,7 +82,7 @@
     private DialogOptions dialogOptions = new() { FullWidth = true };
     protected override async Task OnParametersSetAsync()
     {
-        Share = $"https://api.whatsapp.com/send?text=https://memesplacedemo.azurewebsites.net/Meme/{meme.Id}";
+        Share = $"whatsapp://send?text=https://memesplacedemo.azurewebsites.net/Meme/{meme.Id} The best Memes ";
         StateHasChanged();
     }
     private async Task Like()
