@@ -15,7 +15,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://memesplace-production.up.railway.app") });
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://memesapi20230124015856.azurewebsites.net") });
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<ApiAuthStateProvider>();

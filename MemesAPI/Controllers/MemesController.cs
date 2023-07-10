@@ -62,7 +62,7 @@ namespace MemesAPI.Controllers
             List<Response<MemeDTO>> response = new List<Response<MemeDTO>>();
             try
             {
-                var memes = new List<Meme>();
+                var memes = new List<MemeDTO>();
                 if (_context.Memes == null)
                 {
                     return NotFound(response);
@@ -75,29 +75,14 @@ namespace MemesAPI.Controllers
                 {
                     memes = await GetMemesQuery(memeParameters);
                 }
-                var dtos = _mapper.Map<List<MemeDTO>>(memes);
-                
-                    var tasks = dtos.Select(async dto =>
-                    {
-                        using (var scope = _serviceScopeFactory.CreateScope())
-                        {
-                            var appDBContext = scope.ServiceProvider.GetRequiredService<AppDBContext>();
-                            dto.likeCount = await appDBContext.MemeLike.Where(l => l.MemeId == dto.Id).CountAsync();
-                            if (User.Identity.IsAuthenticated)
-                                dto.like = await appDBContext.Memes.Where(m => m.Id == dto.Id && m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
-                            dto.imgProfile = (await appDBContext.MemeUser.Where(u=>u.UserName==dto.UserName).FirstOrDefaultAsync()).profilePic;
-                            
-                        }
-                    });
-                    await Task.WhenAll(tasks);
                
                
-                foreach (var dto in dtos)
+                foreach (var meme in memes)
                 {
 
                     
 
-                    var responseDTO = new Response<MemeDTO>() { IsSuccess = true, Data = dto, Message = "Found" };
+                    var responseDTO = new Response<MemeDTO>() { IsSuccess = true, Data = meme, Message = "Found" };
                     response.Add(responseDTO);
                 }
 
@@ -113,19 +98,51 @@ namespace MemesAPI.Controllers
             
         }
 
-        private async Task<List<Meme>> GetMemesQuery(MemeParameters memeParameters)
+        private async Task<List<MemeDTO>> GetMemesQuery(MemeParameters memeParameters)
         {
-            var memes = new List<Meme>();
+            var memes = new List<MemeDTO>();
             if (memeParameters.name == "" && memeParameters.tag == "")
             {
-                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                {
+                    Id = meme.Id,
+                    Name = meme.Name,
+                    Description = meme.Description,
+                    URLIMG = meme.URLIMG,
+                    imgProfile = meme.User.profilePic,
+                    IsVideo = meme.IsVideo,
+                    Format = meme.Format,
+                    UserName = meme.UserName,
+                    Date = meme.Date,
+                    Tags = meme.Tags.Select(x => x.Name).ToList(),
+                    like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                    likeCount = meme.Likes.Count
+
+
+                }).OrderByDescending(m => m.Date).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
             }
             else
             {
                 if (memeParameters.name != "")
                 {
                     memes = await _context.Memes.AsNoTracking()
-                       .Include(t => t.Tags)
+                       .Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                       {
+                           Id = meme.Id,
+                           Name = meme.Name,
+                           Description = meme.Description,
+                           URLIMG = meme.URLIMG,
+                           imgProfile = meme.User.profilePic,
+                           IsVideo = meme.IsVideo,
+                           Format = meme.Format,
+                           UserName = meme.UserName,
+                           Date = meme.Date,
+                           Tags = meme.Tags.Select(x => x.Name).ToList(),
+                           like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                           likeCount = meme.Likes.Count
+
+
+                       })
                        .Where(m => m.Name.ToLower().Contains(memeParameters.name.ToLower()))
                        .OrderByDescending(m => m.Date)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
@@ -133,9 +150,24 @@ namespace MemesAPI.Controllers
                 }
                 else
                 {
-                    memes = await _context.Memes.AsNoTracking()
-                       .Include(t => t.Tags)
-                       .Where(m => m.Tags.Any(t => t.Name.ToLower().Contains(memeParameters.tag.ToLower())))
+                    memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                    {
+                        Id = meme.Id,
+                        Name = meme.Name,
+                        Description = meme.Description,
+                        URLIMG = meme.URLIMG,
+                        imgProfile = meme.User.profilePic,
+                        IsVideo = meme.IsVideo,
+                        Format = meme.Format,
+                        UserName = meme.UserName,
+                        Date = meme.Date,
+                        Tags = meme.Tags.Select(x => x.Name).ToList(),
+                        like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                        likeCount = meme.Likes.Count
+
+
+                    })
+                       .Where(m => m.Tags.Any(t => t.ToLower().Contains(memeParameters.tag.ToLower())))
                        .OrderByDescending(m => m.Date)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
@@ -144,30 +176,78 @@ namespace MemesAPI.Controllers
 
             return memes;
         }
-        private async Task<List<Meme>> GetMemesTrendQuery(MemeParameters memeParameters)
+        private async Task<List<MemeDTO>> GetMemesTrendQuery(MemeParameters memeParameters)
         {
-            var memes = new List<Meme>();
+            var memes = new List<MemeDTO>();
             if (memeParameters.name == "" && memeParameters.tag == "")
             {
-                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).OrderByDescending(m => m.Likes.Count).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
+                memes = await _context.Memes.AsNoTracking().Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                {
+                    Id = meme.Id,
+                    Name = meme.Name,
+                    Description = meme.Description,
+                    URLIMG = meme.URLIMG,
+                    imgProfile = meme.User.profilePic,
+                    IsVideo = meme.IsVideo,
+                    Format = meme.Format,
+                    UserName = meme.UserName,
+                    Date = meme.Date,
+                    Tags = meme.Tags.Select(x => x.Name).ToList(),
+                    like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                    likeCount = meme.Likes.Count
+
+
+                }).OrderByDescending(m => m.likeCount).Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize).Take(memeParameters.PageSize).ToListAsync();
             }
             else
             {
                 if (memeParameters.name != "")
                 {
                     memes = await _context.Memes.AsNoTracking()
-                       .Include(t => t.Tags)
+                       .Include(t => t.Tags).Include(l=>l.Likes).Include(u=>u.User).Select(meme => new MemeDTO
+                       {
+                           Id = meme.Id,
+                           Name = meme.Name,
+                           Description = meme.Description,
+                           URLIMG = meme.URLIMG,
+                           imgProfile = meme.User.profilePic,
+                           IsVideo = meme.IsVideo,
+                           Format = meme.Format,
+                           UserName = meme.UserName,
+                           Date = meme.Date,
+                           Tags = meme.Tags.Select(x => x.Name).ToList(),
+                           like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                           likeCount = meme.Likes.Count
+
+
+                       })
                        .Where(m => m.Name.ToLower().Contains(memeParameters.name.ToLower()))
-                       .OrderByDescending(m => m.Likes.Count)
+                       .OrderByDescending(m => m.likeCount)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
                 }
                 else
                 {
                     memes = await _context.Memes.AsNoTracking()
-                       .Include(t => t.Tags)
-                       .Where(m => m.Tags.Any(t => t.Name.ToLower().Contains(memeParameters.tag.ToLower())))
-                       .OrderByDescending(m => m.Likes.Count)
+                       .Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                       {
+                           Id = meme.Id,
+                           Name = meme.Name,
+                           Description = meme.Description,
+                           URLIMG = meme.URLIMG,
+                           imgProfile = meme.User.profilePic,
+                           IsVideo = meme.IsVideo,
+                           Format = meme.Format,
+                           UserName = meme.UserName,
+                           Date = meme.Date,
+                           Tags = meme.Tags.Select(x => x.Name).ToList(),
+                           like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                           likeCount = meme.Likes.Count
+
+
+                       })
+                       .Where(m => m.Tags.Any(t => t.ToLower().Contains(memeParameters.tag.ToLower())))
+                       .OrderByDescending(m => m.likeCount)
                        .Skip((memeParameters.PageNumber - 1) * memeParameters.PageSize)
                        .Take(memeParameters.PageSize).ToListAsync();
                 }
@@ -199,26 +279,33 @@ namespace MemesAPI.Controllers
                 {
                     return NotFound(response);
                 }
-                var meme = await _context.Memes.AsNoTracking().Include(t => t.Tags).FirstAsync(m=>m.Id==id);
+                var meme = await _context.Memes.AsNoTracking().Include(t => t.Tags).Include(l => l.Likes).Include(u => u.User).Select(meme => new MemeDTO
+                {
+                    Id = meme.Id,
+                    Name = meme.Name,
+                    Description = meme.Description,
+                    URLIMG = meme.URLIMG,
+                    imgProfile = meme.User.profilePic,
+                    IsVideo = meme.IsVideo,
+                    Format = meme.Format,
+                    UserName = meme.UserName,
+                    Date = meme.Date,
+                    Tags = meme.Tags.Select(x => x.Name).ToList(),
+                    like = meme.Likes.Any(x => x.UserName == User.Identity.Name),
+                    likeCount = meme.Likes.Count
+
+
+                }
+                ).FirstAsync(m=>m.Id==id);
 
                 if (meme == null)
                 {
                     return NotFound(response);
                 }
-                var dto = _mapper.Map<MemeDTO>(meme);
-                if (meme.Tags.Count > 0)
-                {
-                    foreach (var item in meme.Tags)
-                    {
-                        dto.Tags.Add(item.Name);
-                    }
-                }
-                dto.imgProfile = (await _context.MemeUser.AsNoTracking().Where(u => u.UserName == dto.UserName).FirstOrDefaultAsync()).profilePic;
-                dto.likeCount = await _context.MemeLike.Where(l => l.MemeId == dto.Id).CountAsync(); 
-                if (User.Identity.IsAuthenticated)
-                    dto.like = await _context.Memes.Where(m => m.Id == dto.Id && m.Likes.Any(u => u.UserName == User.Identity.Name)).AnyAsync();
+               
+              
                 response.IsSuccess = true;
-                response.Data= dto;
+                response.Data= meme;
                 return response;
 
             }
